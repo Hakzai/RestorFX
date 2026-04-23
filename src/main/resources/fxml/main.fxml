@@ -98,6 +98,11 @@
                             <VBox spacing="10.0" styleClass="panel-card">
                                 <children>
                                     <Label text="Customers" styleClass="section-title" />
+                                    <HBox spacing="8.0">
+                                        <TextField fx:id="customerSearchField" onKeyReleased="#onCustomerSearchChanged" promptText="Search by name, document, phone, or email" HBox.hgrow="ALWAYS" />
+                                        <Button text="Clear" styleClass="secondary-button" onAction="#onClearCustomerSearch" />
+                                    </HBox>
+                                    <Label fx:id="customerFilterSummaryLabel" styleClass="support-label" text="Showing 0 of 0 customers" />
                                     <TableView fx:id="customerTable" prefHeight="420.0" prefWidth="560.0">
                                         <columns>
                                             <TableColumn fx:id="customerIdColumn" prefWidth="60.0" text="ID" />

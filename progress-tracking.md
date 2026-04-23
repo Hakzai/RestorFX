@@ -10,6 +10,7 @@ What was done:
 - CustomerRepository was implemented with SQLite CRUD operations plus total counting.
 - CustomerService was added with field normalization and validation rules.
 - JavaFX screen now has a dedicated Customers tab with add/edit/delete actions.
+- EPIC 4.1 usability enhancement added live customer search/filter by name, document, phone, and email.
 - MainController is wired to both menu and customer services with independent feedback states.
 - Service and repository tests for customer behavior were added.
 - Schema now contains idempotent sample customer data for better first-run experience.

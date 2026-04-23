@@ -10,6 +10,7 @@ Deliver an end-to-end first version of Customer Management, including backend fl
 - `CustomerRepository` CRUD operations using SQLite (`findAll`, `findById`, `create`, `update`, `deleteById`)
 - `CustomerService` business layer with validation and normalization
 - JavaFX customer management UI (table + form) in a dedicated `Customers` tab
+- EPIC 4.1 customer list enhancement with live search/filter and visible filtered count
 - Main subtitle now reflects customer count and active menu items
 - JUnit tests for customer service validation and repository CRUD integration
 - Idempotent sample seed data for customers in schema bootstrap

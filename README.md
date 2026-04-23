@@ -10,6 +10,7 @@ Implemented in this iteration:
 - Customer repository with SQLite CRUD methods
 - Customer service layer with validation and normalization
 - JavaFX customer management screen with list/add/edit/delete actions
+- EPIC 4.1 customer search/filter enhancement in the Customers tab
 - Service and repository tests for EPIC 4 behavior
 - Idempotent sample seed data for customers
 

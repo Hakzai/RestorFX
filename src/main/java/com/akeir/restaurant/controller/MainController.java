@@ -34,6 +34,7 @@ public class MainController {
     private final MenuItemService menuItemService = new MenuItemService();
     private final CustomerService customerService = new CustomerService();
     private final ObservableList<MenuItem> menuItems = FXCollections.observableArrayList();
+    private final ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
     private final ObservableList<Customer> customers = FXCollections.observableArrayList();
 
     @FXML
@@ -91,6 +92,9 @@ public class MainController {
     private TextField customerNameField;
 
     @FXML
+    private TextField customerSearchField;
+
+    @FXML
     private TextField customerDocumentField;
 
     @FXML
@@ -101,6 +105,9 @@ public class MainController {
 
     @FXML
     private Label customerFeedbackLabel;
+
+    @FXML
+    private Label customerFilterSummaryLabel;
 
     @FXML
     public void initialize() {
@@ -278,6 +285,17 @@ public class MainController {
         setCustomerFeedback("Customer form cleared", true);
     }
 
+    @FXML
+    public void onCustomerSearchChanged() {
+        applyCustomerFilter();
+    }
+
+    @FXML
+    public void onClearCustomerSearch() {
+        customerSearchField.clear();
+        applyCustomerFilter();
+    }
+
     private void configureMenuTable() {
         idColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<Long>(cell.getValue().getId()));
         nameColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getName()));
@@ -308,11 +326,14 @@ public class MainController {
     private void loadCustomers() {
         try {
             List<Customer> loadedCustomers = customerService.findAll();
-            customers.setAll(loadedCustomers);
-            updateSubtitle();
+            allCustomers.setAll(loadedCustomers);
+            applyCustomerFilter();
         } catch (SQLException exception) {
             LOGGER.error("Failed to load customers", exception);
             setCustomerFeedback("Failed to load customers", false);
+            allCustomers.clear();
+            customers.clear();
+            updateCustomerFilterSummary();
             updateSubtitle();
         }
     }
@@ -325,8 +346,11 @@ public class MainController {
             }
         }
 
+        String customerScope = customers.size() == allCustomers.size()
+            ? String.valueOf(allCustomers.size())
+            : customers.size() + " of " + allCustomers.size();
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        subtitleLabel.setText("EPIC 4 customer management - customers: " + customers.size() + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
+        subtitleLabel.setText("EPIC 4.1 customer management - customers: " + customerScope + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
     }
 
     private void populateForm(MenuItem item) {
@@ -365,6 +389,42 @@ public class MainController {
         customerDocumentField.clear();
         customerPhoneField.clear();
         customerEmailField.clear();
+    }
+
+    private void applyCustomerFilter() {
+        String query = normalizeText(customerSearchField.getText());
+        if (query == null || query.isEmpty()) {
+            customers.setAll(allCustomers);
+        } else {
+            String normalizedQuery = query.toLowerCase();
+            customers.clear();
+            for (Customer customer : allCustomers) {
+                if (matchesCustomerQuery(customer, normalizedQuery)) {
+                    customers.add(customer);
+                }
+            }
+        }
+
+        updateCustomerFilterSummary();
+        updateSubtitle();
+    }
+
+    private boolean matchesCustomerQuery(Customer customer, String query) {
+        return containsIgnoreCase(customer.getName(), query)
+            || containsIgnoreCase(customer.getDocument(), query)
+            || containsIgnoreCase(customer.getPhone(), query)
+            || containsIgnoreCase(customer.getEmail(), query);
+    }
+
+    private boolean containsIgnoreCase(String value, String query) {
+        if (value == null || query == null) {
+            return false;
+        }
+        return value.toLowerCase().contains(query);
+    }
+
+    private void updateCustomerFilterSummary() {
+        customerFilterSummaryLabel.setText("Showing " + customers.size() + " of " + allCustomers.size() + " customers");
     }
 
     private int parsePriceToCents(String rawPrice) {

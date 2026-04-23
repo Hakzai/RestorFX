@@ -78,6 +78,11 @@
     -fx-text-fill: #4f5d75;
 }
 
+.support-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #5f6b7a;
+}
+
 .content-tabs {
     -fx-background-color: transparent;
 }
