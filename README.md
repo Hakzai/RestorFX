@@ -1,17 +1,17 @@
-# Restaurant Management - Iteration 3 (EPIC 3)
+# Restaurant Management - Iteration 4 (EPIC 4)
 
 ## Scope of this iteration
 
-This iteration focuses on **EPIC 3 - Menu Management MVP**.
+This iteration focuses on **EPIC 4 - Customer Management MVP**.
 
 Implemented in this iteration:
 
-- MenuItem domain model implementation
-- MenuItem repository with SQLite CRUD methods
-- MenuItem service layer with basic validation
-- JavaFX menu management screen with list/add/edit/delete actions
-- Service and repository tests for EPIC 3 behavior
-- Idempotent sample seed data for menu items
+- Customer domain model implementation
+- Customer repository with SQLite CRUD methods
+- Customer service layer with validation and normalization
+- JavaFX customer management screen with list/add/edit/delete actions
+- Service and repository tests for EPIC 4 behavior
+- Idempotent sample seed data for customers
 
 ## Tech stack
 
@@ -55,7 +55,7 @@ mvn clean test
 - [x] EPIC 1 - Project Setup
 - [x] EPIC 2 - Database Layer
 - [x] EPIC 3 - Menu Management
-- [ ] EPIC 4 - Customer Management
+- [x] EPIC 4 - Customer Management
 - [ ] EPIC 5 - Skipped
 - [ ] EPIC 6 - NFe Integration (Mock)
 - [ ] EPIC 7 - Real NFe Integration

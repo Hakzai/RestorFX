@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
@@ -28,56 +30,122 @@
         </VBox>
     </top>
     <center>
-        <HBox spacing="20.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0" />
-            </padding>
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="content-tabs">
+            <tabs>
+                <Tab text="Menu">
+                    <content>
+                        <HBox spacing="20.0" BorderPane.alignment="CENTER">
+                            <padding>
+                                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0" />
+                            </padding>
 
-            <VBox spacing="10.0" styleClass="panel-card">
-                <children>
-                    <Label text="Menu Items" styleClass="section-title" />
-                    <TableView fx:id="menuTable" prefHeight="420.0" prefWidth="560.0">
-                        <columns>
-                            <TableColumn fx:id="idColumn" prefWidth="60.0" text="ID" />
-                            <TableColumn fx:id="nameColumn" prefWidth="250.0" text="Name" />
-                            <TableColumn fx:id="priceColumn" prefWidth="120.0" text="Price" />
-                            <TableColumn fx:id="activeColumn" prefWidth="100.0" text="Active" />
-                        </columns>
-                    </TableView>
-                </children>
-                <HBox.hgrow>
-                    <Priority fx:constant="ALWAYS" />
-                </HBox.hgrow>
-            </VBox>
+                            <VBox spacing="10.0" styleClass="panel-card">
+                                <children>
+                                    <Label text="Menu Items" styleClass="section-title" />
+                                    <TableView fx:id="menuTable" prefHeight="420.0" prefWidth="560.0">
+                                        <columns>
+                                            <TableColumn fx:id="idColumn" prefWidth="60.0" text="ID" />
+                                            <TableColumn fx:id="nameColumn" prefWidth="250.0" text="Name" />
+                                            <TableColumn fx:id="priceColumn" prefWidth="120.0" text="Price" />
+                                            <TableColumn fx:id="activeColumn" prefWidth="100.0" text="Active" />
+                                        </columns>
+                                    </TableView>
+                                </children>
+                                <HBox.hgrow>
+                                    <Priority fx:constant="ALWAYS" />
+                                </HBox.hgrow>
+                            </VBox>
 
-            <VBox spacing="10.0" styleClass="panel-card" prefWidth="280.0">
-                <children>
-                    <Label text="Item Form" styleClass="section-title" />
+                            <VBox spacing="10.0" styleClass="panel-card" prefWidth="280.0">
+                                <children>
+                                    <Label text="Item Form" styleClass="section-title" />
 
-                    <Label text="Name" styleClass="field-label" />
-                    <TextField fx:id="nameField" promptText="e.g. Burger" />
+                                    <Label text="Name" styleClass="field-label" />
+                                    <TextField fx:id="nameField" promptText="e.g. Burger" />
 
-                    <Label text="Description" styleClass="field-label" />
-                    <TextArea fx:id="descriptionField" prefRowCount="3" promptText="Optional details" wrapText="true" />
+                                    <Label text="Description" styleClass="field-label" />
+                                    <TextArea fx:id="descriptionField" prefRowCount="3" promptText="Optional details" wrapText="true" />
 
-                    <Label text="Price" styleClass="field-label" />
-                    <TextField fx:id="priceField" promptText="e.g. 19.90" />
+                                    <Label text="Price" styleClass="field-label" />
+                                    <TextField fx:id="priceField" promptText="e.g. 19.90" />
 
-                    <CheckBox fx:id="activeCheckBox" text="Active" selected="true" />
+                                    <CheckBox fx:id="activeCheckBox" text="Active" selected="true" />
 
-                    <HBox spacing="8.0">
-                        <Button text="Add" styleClass="action-button" onAction="#onAddItem" />
-                        <Button text="Update" styleClass="action-button" onAction="#onUpdateItem" />
-                    </HBox>
+                                    <HBox spacing="8.0">
+                                        <Button text="Add" styleClass="action-button" onAction="#onAddItem" />
+                                        <Button text="Update" styleClass="action-button" onAction="#onUpdateItem" />
+                                    </HBox>
 
-                    <HBox spacing="8.0">
-                        <Button text="Delete" styleClass="danger-button" onAction="#onDeleteItem" />
-                        <Button text="Clear" styleClass="secondary-button" onAction="#onClearForm" />
-                    </HBox>
+                                    <HBox spacing="8.0">
+                                        <Button text="Delete" styleClass="danger-button" onAction="#onDeleteItem" />
+                                        <Button text="Clear" styleClass="secondary-button" onAction="#onClearForm" />
+                                    </HBox>
 
-                    <Label fx:id="feedbackLabel" styleClass="feedback-label" text="Select, add, edit, or delete menu items" wrapText="true" />
-                </children>
-            </VBox>
-        </HBox>
+                                    <Label fx:id="menuFeedbackLabel" styleClass="feedback-label" text="Select, add, edit, or delete menu items" wrapText="true" />
+                                </children>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Tab>
+
+                <Tab text="Customers">
+                    <content>
+                        <HBox spacing="20.0" BorderPane.alignment="CENTER">
+                            <padding>
+                                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0" />
+                            </padding>
+
+                            <VBox spacing="10.0" styleClass="panel-card">
+                                <children>
+                                    <Label text="Customers" styleClass="section-title" />
+                                    <TableView fx:id="customerTable" prefHeight="420.0" prefWidth="560.0">
+                                        <columns>
+                                            <TableColumn fx:id="customerIdColumn" prefWidth="60.0" text="ID" />
+                                            <TableColumn fx:id="customerNameColumn" prefWidth="170.0" text="Name" />
+                                            <TableColumn fx:id="customerDocumentColumn" prefWidth="120.0" text="Document" />
+                                            <TableColumn fx:id="customerPhoneColumn" prefWidth="120.0" text="Phone" />
+                                            <TableColumn fx:id="customerEmailColumn" prefWidth="170.0" text="Email" />
+                                        </columns>
+                                    </TableView>
+                                </children>
+                                <HBox.hgrow>
+                                    <Priority fx:constant="ALWAYS" />
+                                </HBox.hgrow>
+                            </VBox>
+
+                            <VBox spacing="10.0" styleClass="panel-card" prefWidth="280.0">
+                                <children>
+                                    <Label text="Customer Form" styleClass="section-title" />
+
+                                    <Label text="Name" styleClass="field-label" />
+                                    <TextField fx:id="customerNameField" promptText="e.g. Maria Silva" />
+
+                                    <Label text="Document" styleClass="field-label" />
+                                    <TextField fx:id="customerDocumentField" promptText="e.g. 123.456.789-10" />
+
+                                    <Label text="Phone" styleClass="field-label" />
+                                    <TextField fx:id="customerPhoneField" promptText="e.g. +55 11 99999-9999" />
+
+                                    <Label text="Email" styleClass="field-label" />
+                                    <TextField fx:id="customerEmailField" promptText="e.g. customer@email.com" />
+
+                                    <HBox spacing="8.0">
+                                        <Button text="Add" styleClass="action-button" onAction="#onAddCustomer" />
+                                        <Button text="Update" styleClass="action-button" onAction="#onUpdateCustomer" />
+                                    </HBox>
+
+                                    <HBox spacing="8.0">
+                                        <Button text="Delete" styleClass="danger-button" onAction="#onDeleteCustomer" />
+                                        <Button text="Clear" styleClass="secondary-button" onAction="#onClearCustomerForm" />
+                                    </HBox>
+
+                                    <Label fx:id="customerFeedbackLabel" styleClass="feedback-label" text="Select, add, edit, or delete customers" wrapText="true" />
+                                </children>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
     </center>
 </BorderPane>

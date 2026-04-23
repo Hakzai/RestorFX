@@ -77,3 +77,11 @@
     -fx-font-weight: bold;
     -fx-text-fill: #4f5d75;
 }
+
+.content-tabs {
+    -fx-background-color: transparent;
+}
+
+.content-tabs .tab-header-background {
+    -fx-background-color: rgba(255, 255, 255, 0.45);
+}

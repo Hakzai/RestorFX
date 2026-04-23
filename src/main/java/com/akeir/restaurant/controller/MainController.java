@@ -10,7 +10,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.akeir.restaurant.model.Customer;
 import com.akeir.restaurant.model.MenuItem;
+import com.akeir.restaurant.service.CustomerService;
 import com.akeir.restaurant.service.MenuItemService;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -30,7 +32,9 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     private final MenuItemService menuItemService = new MenuItemService();
+    private final CustomerService customerService = new CustomerService();
     private final ObservableList<MenuItem> menuItems = FXCollections.observableArrayList();
+    private final ObservableList<Customer> customers = FXCollections.observableArrayList();
 
     @FXML
     private Label subtitleLabel;
@@ -51,6 +55,24 @@ public class MainController {
     private TableColumn<MenuItem, String> activeColumn;
 
     @FXML
+    private TableView<Customer> customerTable;
+
+    @FXML
+    private TableColumn<Customer, Long> customerIdColumn;
+
+    @FXML
+    private TableColumn<Customer, String> customerNameColumn;
+
+    @FXML
+    private TableColumn<Customer, String> customerDocumentColumn;
+
+    @FXML
+    private TableColumn<Customer, String> customerPhoneColumn;
+
+    @FXML
+    private TableColumn<Customer, String> customerEmailColumn;
+
+    @FXML
     private TextField nameField;
 
     @FXML
@@ -63,16 +85,37 @@ public class MainController {
     private CheckBox activeCheckBox;
 
     @FXML
-    private Label feedbackLabel;
+    private Label menuFeedbackLabel;
+
+    @FXML
+    private TextField customerNameField;
+
+    @FXML
+    private TextField customerDocumentField;
+
+    @FXML
+    private TextField customerPhoneField;
+
+    @FXML
+    private TextField customerEmailField;
+
+    @FXML
+    private Label customerFeedbackLabel;
 
     @FXML
     public void initialize() {
-        configureTable();
+        configureMenuTable();
+        configureCustomerTable();
+
         menuTable.setItems(menuItems);
+        customerTable.setItems(customers);
+
         menuTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> populateForm(newValue));
+        customerTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> populateCustomerForm(newValue));
 
         activeCheckBox.setSelected(true);
         loadMenuItems();
+        loadCustomers();
     }
 
     @FXML
@@ -85,14 +128,14 @@ public class MainController {
                 activeCheckBox.isSelected()
             );
 
-            setFeedback("Menu item created: " + createdItem.getName(), true);
+            setMenuFeedback("Menu item created: " + createdItem.getName(), true);
             clearForm();
             loadMenuItems();
         } catch (IllegalArgumentException exception) {
-            setFeedback(exception.getMessage(), false);
+            setMenuFeedback(exception.getMessage(), false);
         } catch (SQLException exception) {
             LOGGER.error("Failed to add menu item", exception);
-            setFeedback("Failed to create menu item", false);
+            setMenuFeedback("Failed to create menu item", false);
         }
     }
 
@@ -100,7 +143,7 @@ public class MainController {
     public void onUpdateItem() {
         MenuItem selectedItem = menuTable.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
-            setFeedback("Select an item before updating", false);
+            setMenuFeedback("Select an item before updating", false);
             return;
         }
 
@@ -112,17 +155,17 @@ public class MainController {
 
             boolean updated = menuItemService.update(selectedItem);
             if (updated) {
-                setFeedback("Menu item updated", true);
+                setMenuFeedback("Menu item updated", true);
                 clearForm();
                 loadMenuItems();
             } else {
-                setFeedback("Menu item not found for update", false);
+                setMenuFeedback("Menu item not found for update", false);
             }
         } catch (IllegalArgumentException exception) {
-            setFeedback(exception.getMessage(), false);
+            setMenuFeedback(exception.getMessage(), false);
         } catch (SQLException exception) {
             LOGGER.error("Failed to update menu item", exception);
-            setFeedback("Failed to update menu item", false);
+            setMenuFeedback("Failed to update menu item", false);
         }
     }
 
@@ -130,60 +173,160 @@ public class MainController {
     public void onDeleteItem() {
         MenuItem selectedItem = menuTable.getSelectionModel().getSelectedItem();
         if (selectedItem == null || selectedItem.getId() == null) {
-            setFeedback("Select an item before deleting", false);
+            setMenuFeedback("Select an item before deleting", false);
             return;
         }
 
         try {
             boolean deleted = menuItemService.deleteById(selectedItem.getId().longValue());
             if (deleted) {
-                setFeedback("Menu item deleted", true);
+                setMenuFeedback("Menu item deleted", true);
                 clearForm();
                 loadMenuItems();
             } else {
-                setFeedback("Menu item not found for deletion", false);
+                setMenuFeedback("Menu item not found for deletion", false);
             }
         } catch (SQLException exception) {
             LOGGER.error("Failed to delete menu item", exception);
-            setFeedback("Failed to delete menu item", false);
+            setMenuFeedback("Failed to delete menu item", false);
         }
     }
 
     @FXML
     public void onClearForm() {
         clearForm();
-        setFeedback("Form cleared", true);
+        setMenuFeedback("Form cleared", true);
     }
 
-    private void configureTable() {
+    @FXML
+    public void onAddCustomer() {
+        try {
+            Customer createdCustomer = customerService.create(
+                customerNameField.getText(),
+                customerDocumentField.getText(),
+                customerPhoneField.getText(),
+                customerEmailField.getText()
+            );
+
+            setCustomerFeedback("Customer created: " + createdCustomer.getName(), true);
+            clearCustomerForm();
+            loadCustomers();
+        } catch (IllegalArgumentException exception) {
+            setCustomerFeedback(exception.getMessage(), false);
+        } catch (SQLException exception) {
+            LOGGER.error("Failed to add customer", exception);
+            setCustomerFeedback("Failed to create customer", false);
+        }
+    }
+
+    @FXML
+    public void onUpdateCustomer() {
+        Customer selectedCustomer = customerTable.getSelectionModel().getSelectedItem();
+        if (selectedCustomer == null) {
+            setCustomerFeedback("Select a customer before updating", false);
+            return;
+        }
+
+        try {
+            selectedCustomer.setName(normalizeText(customerNameField.getText()));
+            selectedCustomer.setDocument(normalizeNullableText(customerDocumentField.getText()));
+            selectedCustomer.setPhone(normalizeNullableText(customerPhoneField.getText()));
+            selectedCustomer.setEmail(normalizeNullableText(customerEmailField.getText()));
+
+            boolean updated = customerService.update(selectedCustomer);
+            if (updated) {
+                setCustomerFeedback("Customer updated", true);
+                clearCustomerForm();
+                loadCustomers();
+            } else {
+                setCustomerFeedback("Customer not found for update", false);
+            }
+        } catch (IllegalArgumentException exception) {
+            setCustomerFeedback(exception.getMessage(), false);
+        } catch (SQLException exception) {
+            LOGGER.error("Failed to update customer", exception);
+            setCustomerFeedback("Failed to update customer", false);
+        }
+    }
+
+    @FXML
+    public void onDeleteCustomer() {
+        Customer selectedCustomer = customerTable.getSelectionModel().getSelectedItem();
+        if (selectedCustomer == null || selectedCustomer.getId() == null) {
+            setCustomerFeedback("Select a customer before deleting", false);
+            return;
+        }
+
+        try {
+            boolean deleted = customerService.deleteById(selectedCustomer.getId().longValue());
+            if (deleted) {
+                setCustomerFeedback("Customer deleted", true);
+                clearCustomerForm();
+                loadCustomers();
+            } else {
+                setCustomerFeedback("Customer not found for deletion", false);
+            }
+        } catch (SQLException exception) {
+            LOGGER.error("Failed to delete customer", exception);
+            setCustomerFeedback("Failed to delete customer", false);
+        }
+    }
+
+    @FXML
+    public void onClearCustomerForm() {
+        clearCustomerForm();
+        setCustomerFeedback("Customer form cleared", true);
+    }
+
+    private void configureMenuTable() {
         idColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<Long>(cell.getValue().getId()));
         nameColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getName()));
         priceColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(formatCents(cell.getValue().getPriceCents())));
         activeColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().isActive() ? "Yes" : "No"));
     }
 
+    private void configureCustomerTable() {
+        customerIdColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<Long>(cell.getValue().getId()));
+        customerNameColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getName()));
+        customerDocumentColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(valueOrDash(cell.getValue().getDocument())));
+        customerPhoneColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(valueOrDash(cell.getValue().getPhone())));
+        customerEmailColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(valueOrDash(cell.getValue().getEmail())));
+    }
+
     private void loadMenuItems() {
         try {
             List<MenuItem> items = menuItemService.findAll();
             menuItems.setAll(items);
-            updateSubtitle(items);
+            updateSubtitle();
         } catch (SQLException exception) {
             LOGGER.error("Failed to load menu items", exception);
-            setFeedback("Failed to load menu items", false);
-            updateSubtitle(menuItems);
+            setMenuFeedback("Failed to load menu items", false);
+            updateSubtitle();
         }
     }
 
-    private void updateSubtitle(List<MenuItem> items) {
+    private void loadCustomers() {
+        try {
+            List<Customer> loadedCustomers = customerService.findAll();
+            customers.setAll(loadedCustomers);
+            updateSubtitle();
+        } catch (SQLException exception) {
+            LOGGER.error("Failed to load customers", exception);
+            setCustomerFeedback("Failed to load customers", false);
+            updateSubtitle();
+        }
+    }
+
+    private void updateSubtitle() {
         int activeItems = 0;
-        for (MenuItem item : items) {
+        for (MenuItem item : menuItems) {
             if (item.isActive()) {
                 activeItems++;
             }
         }
 
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        subtitleLabel.setText("EPIC 3 menu management - active items: " + activeItems + " of " + items.size() + " - " + now);
+        subtitleLabel.setText("EPIC 4 customer management - customers: " + customers.size() + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
     }
 
     private void populateForm(MenuItem item) {
@@ -203,6 +346,25 @@ public class MainController {
         descriptionField.clear();
         priceField.clear();
         activeCheckBox.setSelected(true);
+    }
+
+    private void populateCustomerForm(Customer customer) {
+        if (customer == null) {
+            return;
+        }
+
+        customerNameField.setText(customer.getName());
+        customerDocumentField.setText(valueOrEmpty(customer.getDocument()));
+        customerPhoneField.setText(valueOrEmpty(customer.getPhone()));
+        customerEmailField.setText(valueOrEmpty(customer.getEmail()));
+    }
+
+    private void clearCustomerForm() {
+        customerTable.getSelectionModel().clearSelection();
+        customerNameField.clear();
+        customerDocumentField.clear();
+        customerPhoneField.clear();
+        customerEmailField.clear();
     }
 
     private int parsePriceToCents(String rawPrice) {
@@ -244,12 +406,35 @@ public class MainController {
         return trimmed;
     }
 
-    private void setFeedback(String message, boolean success) {
-        feedbackLabel.setText(message);
+    private String valueOrDash(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "-";
+        }
+        return value;
+    }
+
+    private String valueOrEmpty(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value;
+    }
+
+    private void setMenuFeedback(String message, boolean success) {
+        menuFeedbackLabel.setText(message);
         if (success) {
-            feedbackLabel.setStyle("-fx-text-fill: #2f6b3f;");
+            menuFeedbackLabel.setStyle("-fx-text-fill: #2f6b3f;");
         } else {
-            feedbackLabel.setStyle("-fx-text-fill: #8f1d21;");
+            menuFeedbackLabel.setStyle("-fx-text-fill: #8f1d21;");
+        }
+    }
+
+    private void setCustomerFeedback(String message, boolean success) {
+        customerFeedbackLabel.setText(message);
+        if (success) {
+            customerFeedbackLabel.setStyle("-fx-text-fill: #2f6b3f;");
+        } else {
+            customerFeedbackLabel.setStyle("-fx-text-fill: #8f1d21;");
         }
     }
 }

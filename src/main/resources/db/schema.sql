@@ -55,3 +55,16 @@ SELECT 'Lemon Soda', 'Refreshing sparkling drink', 790, 1
 WHERE NOT EXISTS (
     SELECT 1 FROM menu_item WHERE name = 'Lemon Soda'
 );
+
+-- EPIC 4 sample seed data (idempotent)
+INSERT INTO customer (name, document, phone, email)
+SELECT 'Maria Silva', '12345678910', '+55 11 98888-1111', 'maria.silva@example.com'
+WHERE NOT EXISTS (
+    SELECT 1 FROM customer WHERE name = 'Maria Silva' AND document = '12345678910'
+);
+
+INSERT INTO customer (name, document, phone, email)
+SELECT 'Joao Santos', '98765432100', '+55 11 97777-2222', 'joao.santos@example.com'
+WHERE NOT EXISTS (
+    SELECT 1 FROM customer WHERE name = 'Joao Santos' AND document = '98765432100'
+);
