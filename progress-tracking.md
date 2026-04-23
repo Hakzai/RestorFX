@@ -20,3 +20,18 @@ What is next:
 
 - Keep EPIC 5 intentionally skipped.
 - Start EPIC 7 with a real NFe provider adapter behind the same `NFeService` contract.
+
+## Current Iteration (In Progress)
+
+Iteration: **7 (EPIC 7 - Real NFe Integration Kickoff)**
+
+What has started:
+
+- Legacy mock UI flow is now controlled by `restaurant.feature.nfe.mock.enabled`.
+- A dedicated `NFe Real` tab was added for provider and certificate setup.
+- EPIC 7 kickoff details are tracked in `iterations/iteration-07-epic-7/README.md`.
+
+What is next:
+
+- Implement a concrete real provider adapter behind `NFeService`.
+- Add secure certificate handling and environment-specific provider configuration.

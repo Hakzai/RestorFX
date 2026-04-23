@@ -30,7 +30,7 @@
         </VBox>
     </top>
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="content-tabs">
+        <TabPane fx:id="contentTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="content-tabs">
             <tabs>
                 <Tab text="Menu">
                     <content>
@@ -151,7 +151,7 @@
                     </content>
                 </Tab>
 
-                <Tab text="NFe Mock">
+                <Tab fx:id="nfeMockTab" text="NFe Mock">
                     <content>
                         <HBox spacing="20.0" BorderPane.alignment="CENTER">
                             <padding>
@@ -204,6 +204,57 @@
                                               wrapText="true"
                                               styleClass="audit-output-area"
                                               promptText="Recent fiscal records will appear here" />
+                                </children>
+                                <HBox.hgrow>
+                                    <Priority fx:constant="ALWAYS" />
+                                </HBox.hgrow>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Tab>
+
+                <Tab fx:id="nfeRealTab" text="NFe Real">
+                    <content>
+                        <HBox spacing="20.0" BorderPane.alignment="CENTER">
+                            <padding>
+                                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0" />
+                            </padding>
+
+                            <VBox spacing="10.0" styleClass="panel-card" prefWidth="340.0">
+                                <children>
+                                    <Label text="Real NFe Setup" styleClass="section-title" />
+
+                                    <Label text="Provider" styleClass="field-label" />
+                                    <TextField fx:id="nfeRealProviderField" promptText="e.g. ACBr, TecnoSpeed, SEFAZ adapter" />
+
+                                    <Label text="Environment" styleClass="field-label" />
+                                    <TextField fx:id="nfeRealEnvironmentField" promptText="e.g. homologation or production" />
+
+                                    <Label text="Certificate Path" styleClass="field-label" />
+                                    <TextField fx:id="nfeRealCertificatePathField" promptText="e.g. C:/certs/company.pfx" />
+
+                                    <Label text="Certificate Password" styleClass="field-label" />
+                                    <TextField fx:id="nfeRealCertificatePasswordField" promptText="Stored locally during setup" />
+
+                                    <HBox spacing="8.0">
+                                        <Button text="Validate Setup" styleClass="action-button" onAction="#onValidateRealNFeSetup" />
+                                        <Button text="Clear" styleClass="secondary-button" onAction="#onClearRealNFeSetup" />
+                                    </HBox>
+
+                                    <Label fx:id="nfeRealFeedbackLabel" styleClass="feedback-label" text="Prepare the real provider configuration for EPIC 7" wrapText="true" />
+                                </children>
+                            </VBox>
+
+                            <VBox spacing="10.0" styleClass="panel-card">
+                                <children>
+                                    <Label text="EPIC 7 Notes" styleClass="section-title" />
+                                    <TextArea fx:id="nfeRealPreparationNotesArea"
+                                              editable="false"
+                                              prefHeight="420.0"
+                                              prefWidth="500.0"
+                                              wrapText="true"
+                                              styleClass="xml-output-area"
+                                              promptText="Provider setup notes and next steps will appear here" />
                                 </children>
                                 <HBox.hgrow>
                                     <Priority fx:constant="ALWAYS" />

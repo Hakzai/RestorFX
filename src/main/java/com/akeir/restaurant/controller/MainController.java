@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.akeir.restaurant.config.FeatureFlags;
 import com.akeir.restaurant.dto.NFeEmissionRequest;
 import com.akeir.restaurant.dto.NFeEmissionResult;
 import com.akeir.restaurant.integration.nfe.MockNFeService;
@@ -28,6 +29,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -41,12 +44,22 @@ public class MainController {
     private final CustomerService customerService = new CustomerService();
     private final FiscalDocumentService fiscalDocumentService = new FiscalDocumentService();
     private final NFeService nfeService = new MockNFeService();
+    private final boolean nfeMockEnabled = FeatureFlags.isNFeMockEnabled();
     private final ObservableList<MenuItem> menuItems = FXCollections.observableArrayList();
     private final ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
     private final ObservableList<Customer> customers = FXCollections.observableArrayList();
 
     @FXML
     private Label subtitleLabel;
+
+    @FXML
+    private TabPane contentTabPane;
+
+    @FXML
+    private Tab nfeMockTab;
+
+    @FXML
+    private Tab nfeRealTab;
 
     @FXML
     private TableView<MenuItem> menuTable;
@@ -139,9 +152,28 @@ public class MainController {
     private Label nfeFeedbackLabel;
 
     @FXML
+    private TextField nfeRealProviderField;
+
+    @FXML
+    private TextField nfeRealEnvironmentField;
+
+    @FXML
+    private TextField nfeRealCertificatePathField;
+
+    @FXML
+    private TextField nfeRealCertificatePasswordField;
+
+    @FXML
+    private TextArea nfeRealPreparationNotesArea;
+
+    @FXML
+    private Label nfeRealFeedbackLabel;
+
+    @FXML
     public void initialize() {
         configureMenuTable();
         configureCustomerTable();
+        configureNFeTabs();
 
         menuTable.setItems(menuItems);
         customerTable.setItems(customers);
@@ -367,11 +399,79 @@ public class MainController {
         loadNFeAuditHistory();
     }
 
+    @FXML
+    public void onValidateRealNFeSetup() {
+        String provider = normalizeText(nfeRealProviderField.getText());
+        String environment = normalizeText(nfeRealEnvironmentField.getText());
+        String certificatePath = normalizeText(nfeRealCertificatePathField.getText());
+        String certificatePassword = normalizeText(nfeRealCertificatePasswordField.getText());
+
+        if (provider == null || provider.isEmpty()) {
+            setRealNFeFeedback("Provider name is required for EPIC 7 setup");
+            return;
+        }
+
+        if (environment == null || environment.isEmpty()) {
+            setRealNFeFeedback("Environment is required for EPIC 7 setup");
+            return;
+        }
+
+        if (certificatePath == null || certificatePath.isEmpty()) {
+            setRealNFeFeedback("Certificate path is required for EPIC 7 setup");
+            return;
+        }
+
+        if (certificatePassword == null || certificatePassword.isEmpty()) {
+            setRealNFeFeedback("Certificate password is required for EPIC 7 setup");
+            return;
+        }
+
+        nfeRealPreparationNotesArea.setText(
+            "Provider: " + provider + "\n"
+                + "Environment: " + environment + "\n"
+                + "Certificate: " + certificatePath + "\n"
+                + "Password: configured\n\n"
+                + "Next step: wire the real NFe adapter behind the same NFeService contract."
+        );
+        setRealNFeFeedback("EPIC 7 setup captured. The mock tab remains controlled by the feature flag.");
+    }
+
+    @FXML
+    public void onClearRealNFeSetup() {
+        nfeRealProviderField.clear();
+        nfeRealEnvironmentField.clear();
+        nfeRealCertificatePathField.clear();
+        nfeRealCertificatePasswordField.clear();
+        nfeRealPreparationNotesArea.clear();
+        setRealNFeFeedback("EPIC 7 setup cleared");
+    }
+
     private void configureMenuTable() {
         idColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<Long>(cell.getValue().getId()));
         nameColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getName()));
         priceColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(formatCents(cell.getValue().getPriceCents())));
         activeColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().isActive() ? "Yes" : "No"));
+    }
+
+    private void configureNFeTabs() {
+        if (nfeMockTab != null) {
+            nfeMockTab.setDisable(!nfeMockEnabled);
+            if (!nfeMockEnabled) {
+                nfeMockTab.setText("NFe Mock (disabled by feature flag)");
+            }
+        }
+
+        if (nfeRealFeedbackLabel != null) {
+            if (nfeMockEnabled) {
+                nfeRealFeedbackLabel.setText("Use this tab to prepare the EPIC 7 real NFe integration.");
+            } else {
+                nfeRealFeedbackLabel.setText("Legacy mock mode is disabled. This tab is the EPIC 7 integration entry point.");
+            }
+        }
+
+        if (!nfeMockEnabled && contentTabPane != null && nfeRealTab != null) {
+            contentTabPane.getSelectionModel().select(nfeRealTab);
+        }
     }
 
     private void configureCustomerTable() {
@@ -421,7 +521,7 @@ public class MainController {
             ? String.valueOf(allCustomers.size())
             : customers.size() + " of " + allCustomers.size();
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        subtitleLabel.setText("EPIC 6.1 NFe mock audit trail - customers: " + customerScope + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
+        subtitleLabel.setText("EPIC 7 kickoff - customers: " + customerScope + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
     }
 
     private void loadNFeAuditHistory() {
@@ -454,6 +554,12 @@ public class MainController {
         } catch (SQLException exception) {
             LOGGER.error("Failed to load NFe audit history", exception);
             nfeAuditHistoryArea.setText("Failed to load fiscal audit history.");
+        }
+    }
+
+    private void setRealNFeFeedback(String message) {
+        if (nfeRealFeedbackLabel != null) {
+            nfeRealFeedbackLabel.setText(message);
         }
     }
 

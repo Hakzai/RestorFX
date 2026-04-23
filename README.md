@@ -64,3 +64,10 @@ mvn clean test
 - [ ] EPIC 7 - Real NFe Integration
 - [ ] EPIC 8 - Backup & Reliability
 - [ ] EPIC 9 - Packaging & Delivery
+
+## EPIC 7 starter notes
+
+- The legacy mock tab is controlled by the `restaurant.feature.nfe.mock.enabled` system property.
+- Leave it enabled during local mock testing; set it to `false` to disable the mock tab and use the new EPIC 7 tab.
+- The new `NFe Real` tab is the starting point for provider and certificate setup work.
+- Iteration details for this kickoff are in `iterations/iteration-07-epic-7/README.md`.
