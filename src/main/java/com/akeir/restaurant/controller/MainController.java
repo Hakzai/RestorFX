@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.akeir.restaurant.config.FeatureFlags;
 import com.akeir.restaurant.dto.NFeEmissionRequest;
 import com.akeir.restaurant.dto.NFeEmissionResult;
-import com.akeir.restaurant.integration.nfe.MockNFeService;
+import com.akeir.restaurant.integration.nfe.NFeProvider;
+import com.akeir.restaurant.integration.nfe.NFeServiceFactory;
 import com.akeir.restaurant.integration.nfe.NFeService;
 import com.akeir.restaurant.model.Customer;
 import com.akeir.restaurant.model.FiscalDocument;
@@ -28,6 +29,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -43,11 +45,12 @@ public class MainController {
     private final MenuItemService menuItemService = new MenuItemService();
     private final CustomerService customerService = new CustomerService();
     private final FiscalDocumentService fiscalDocumentService = new FiscalDocumentService();
-    private final NFeService nfeService = new MockNFeService();
     private final boolean nfeMockEnabled = FeatureFlags.isNFeMockEnabled();
     private final ObservableList<MenuItem> menuItems = FXCollections.observableArrayList();
     private final ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
     private final ObservableList<Customer> customers = FXCollections.observableArrayList();
+    private NFeProvider activeNFeProvider;
+    private NFeService nfeService;
 
     @FXML
     private Label subtitleLabel;
@@ -152,7 +155,7 @@ public class MainController {
     private Label nfeFeedbackLabel;
 
     @FXML
-    private TextField nfeRealProviderField;
+    private ComboBox<String> nfeProviderComboBox;
 
     @FXML
     private TextField nfeRealEnvironmentField;
@@ -173,6 +176,7 @@ public class MainController {
     public void initialize() {
         configureMenuTable();
         configureCustomerTable();
+        initializeNFeProviderSelection();
         configureNFeTabs();
 
         menuTable.setItems(menuItems);
@@ -360,6 +364,11 @@ public class MainController {
 
     @FXML
     public void onEmitNFeMock() {
+        if (nfeService == null) {
+            setNFeFeedback("Select an NFe provider before emission", false);
+            return;
+        }
+
         try {
             NFeEmissionRequest request = new NFeEmissionRequest(
                 normalizeText(nfeCustomerNameField.getText()),
@@ -372,15 +381,18 @@ public class MainController {
             FiscalDocument fiscalDocument = fiscalDocumentService.recordNFeSuccess(request, result);
             nfeXmlOutputArea.setText(result.getXml());
             loadNFeAuditHistory();
-            setNFeFeedback("NFe mock emitted and audited (#" + fiscalDocument.getId() + ") - access key: " + result.getAccessKey(), true);
+            setNFeFeedback(
+                "NFe emitted via " + activeNFeProvider + " and audited (#" + fiscalDocument.getId() + ") - access key: " + result.getAccessKey(),
+                true
+            );
         } catch (IllegalArgumentException exception) {
             setNFeFeedback(exception.getMessage(), false);
         } catch (SQLException exception) {
-            LOGGER.error("Failed to persist fiscal audit for NFe mock", exception);
+            LOGGER.error("Failed to persist fiscal audit for NFe emission", exception);
             setNFeFeedback("NFe emitted but fiscal audit persistence failed", false);
         } catch (RuntimeException exception) {
-            LOGGER.error("Failed to emit NFe mock", exception);
-            setNFeFeedback("Failed to emit NFe mock", false);
+            LOGGER.error("Failed to emit NFe via provider {}", activeNFeProvider, exception);
+            setNFeFeedback("Failed to emit NFe via selected provider", false);
         }
     }
 
@@ -401,7 +413,7 @@ public class MainController {
 
     @FXML
     public void onValidateRealNFeSetup() {
-        String provider = normalizeText(nfeRealProviderField.getText());
+        String provider = nfeProviderComboBox == null ? null : normalizeText(nfeProviderComboBox.getValue());
         String environment = normalizeText(nfeRealEnvironmentField.getText());
         String certificatePath = normalizeText(nfeRealCertificatePathField.getText());
         String certificatePassword = normalizeText(nfeRealCertificatePasswordField.getText());
@@ -437,8 +449,28 @@ public class MainController {
     }
 
     @FXML
+    public void onApplyNFeProvider() {
+        String providerValue = nfeProviderComboBox == null ? null : normalizeText(nfeProviderComboBox.getValue());
+        if (providerValue == null || providerValue.isEmpty()) {
+            setRealNFeFeedback("Select a provider before applying");
+            return;
+        }
+
+        try {
+            NFeProvider resolvedProvider = NFeServiceFactory.resolveProvider(providerValue, nfeMockEnabled);
+            activeNFeProvider = resolvedProvider;
+            nfeService = NFeServiceFactory.create(resolvedProvider);
+            setRealNFeFeedback("Provider activated: " + activeNFeProvider);
+        } catch (IllegalArgumentException exception) {
+            setRealNFeFeedback(exception.getMessage());
+        }
+    }
+
+    @FXML
     public void onClearRealNFeSetup() {
-        nfeRealProviderField.clear();
+        if (nfeProviderComboBox != null && activeNFeProvider != null) {
+            nfeProviderComboBox.setValue(activeNFeProvider.name());
+        }
         nfeRealEnvironmentField.clear();
         nfeRealCertificatePathField.clear();
         nfeRealCertificatePasswordField.clear();
@@ -463,14 +495,29 @@ public class MainController {
 
         if (nfeRealFeedbackLabel != null) {
             if (nfeMockEnabled) {
-                nfeRealFeedbackLabel.setText("Use this tab to prepare the EPIC 7 real NFe integration.");
+                nfeRealFeedbackLabel.setText("Use this tab to prepare EPIC 7. Active provider: " + activeNFeProvider + ".");
             } else {
-                nfeRealFeedbackLabel.setText("Legacy mock mode is disabled. This tab is the EPIC 7 integration entry point.");
+                nfeRealFeedbackLabel.setText("Legacy mock mode is disabled. Active provider: " + activeNFeProvider + ".");
             }
         }
 
         if (!nfeMockEnabled && contentTabPane != null && nfeRealTab != null) {
             contentTabPane.getSelectionModel().select(nfeRealTab);
+        }
+    }
+
+    private void initializeNFeProviderSelection() {
+        activeNFeProvider = NFeServiceFactory.resolveDefaultProvider(nfeMockEnabled);
+        nfeService = NFeServiceFactory.create(activeNFeProvider);
+
+        if (nfeProviderComboBox != null) {
+            ObservableList<String> providers = FXCollections.observableArrayList();
+            if (nfeMockEnabled) {
+                providers.add(NFeProvider.MOCK.name());
+            }
+            providers.add(NFeProvider.REAL_STUB.name());
+            nfeProviderComboBox.setItems(providers);
+            nfeProviderComboBox.setValue(activeNFeProvider.name());
         }
     }
 

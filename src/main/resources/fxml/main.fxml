@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -225,7 +226,7 @@
                                     <Label text="Real NFe Setup" styleClass="section-title" />
 
                                     <Label text="Provider" styleClass="field-label" />
-                                    <TextField fx:id="nfeRealProviderField" promptText="e.g. ACBr, TecnoSpeed, SEFAZ adapter" />
+                                    <ComboBox fx:id="nfeProviderComboBox" promptText="Select provider" />
 
                                     <Label text="Environment" styleClass="field-label" />
                                     <TextField fx:id="nfeRealEnvironmentField" promptText="e.g. homologation or production" />
@@ -237,6 +238,7 @@
                                     <TextField fx:id="nfeRealCertificatePasswordField" promptText="Stored locally during setup" />
 
                                     <HBox spacing="8.0">
+                                        <Button text="Apply Provider" styleClass="action-button" onAction="#onApplyNFeProvider" />
                                         <Button text="Validate Setup" styleClass="action-button" onAction="#onValidateRealNFeSetup" />
                                         <Button text="Clear" styleClass="secondary-button" onAction="#onClearRealNFeSetup" />
                                     </HBox>

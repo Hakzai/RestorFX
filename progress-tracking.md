@@ -30,8 +30,10 @@ What has started:
 - Legacy mock UI flow is now controlled by `restaurant.feature.nfe.mock.enabled`.
 - A dedicated `NFe Real` tab was added for provider and certificate setup.
 - EPIC 7 kickoff details are tracked in `iterations/iteration-07-epic-7/README.md`.
+- Provider selection (`MOCK` / `REAL_STUB`) now applies at runtime via `NFeServiceFactory`.
+- A `RealNFeService` stub adapter is now wired for initial non-mock provider flow.
 
 What is next:
 
-- Implement a concrete real provider adapter behind `NFeService`.
-- Add secure certificate handling and environment-specific provider configuration.
+- Replace `RealNFeService` stub with concrete provider adapter logic.
+- Add secure certificate handling and provider-specific configuration validation.
