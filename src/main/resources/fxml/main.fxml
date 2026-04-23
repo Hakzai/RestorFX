@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.restaurant.controller.MainController"
+            prefHeight="600.0"
+            prefWidth="900.0"
+            styleClass="root-layout">
+    <center>
+        <VBox alignment="CENTER" spacing="12.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0" />
+            </padding>
+            <Label text="Restaurant Management" styleClass="title-label" />
+            <Label fx:id="subtitleLabel" styleClass="subtitle-label" />
+        </VBox>
+    </center>
+</BorderPane>
