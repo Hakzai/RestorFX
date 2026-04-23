@@ -69,6 +69,7 @@ mvn clean test
 
 - The legacy mock tab is controlled by the `restaurant.feature.nfe.mock.enabled` system property.
 - The active provider can be configured with `restaurant.nfe.provider` (`MOCK` or `REAL_STUB`).
+- EPIC 7.2 setup validation now runs in service layer using Hibernate Validator + Java KeyStore checks.
 - Leave it enabled during local mock testing; set it to `false` to disable the mock tab and use the new EPIC 7 tab.
 - The new `NFe Real` tab is the starting point for provider and certificate setup work.
 - Iteration details for this kickoff are in `iterations/iteration-07-epic-7/README.md`.

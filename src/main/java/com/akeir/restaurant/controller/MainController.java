@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.akeir.restaurant.config.FeatureFlags;
+import com.akeir.restaurant.dto.NFeProviderSetupRequest;
 import com.akeir.restaurant.dto.NFeEmissionRequest;
 import com.akeir.restaurant.dto.NFeEmissionResult;
 import com.akeir.restaurant.integration.nfe.NFeProvider;
@@ -22,6 +23,7 @@ import com.akeir.restaurant.model.MenuItem;
 import com.akeir.restaurant.service.CustomerService;
 import com.akeir.restaurant.service.FiscalDocumentService;
 import com.akeir.restaurant.service.MenuItemService;
+import com.akeir.restaurant.service.NFeProviderConfigurationService;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -45,6 +47,7 @@ public class MainController {
     private final MenuItemService menuItemService = new MenuItemService();
     private final CustomerService customerService = new CustomerService();
     private final FiscalDocumentService fiscalDocumentService = new FiscalDocumentService();
+    private final NFeProviderConfigurationService nfeProviderConfigurationService = new NFeProviderConfigurationService();
     private final boolean nfeMockEnabled = FeatureFlags.isNFeMockEnabled();
     private final ObservableList<MenuItem> menuItems = FXCollections.observableArrayList();
     private final ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
@@ -413,39 +416,20 @@ public class MainController {
 
     @FXML
     public void onValidateRealNFeSetup() {
-        String provider = nfeProviderComboBox == null ? null : normalizeText(nfeProviderComboBox.getValue());
-        String environment = normalizeText(nfeRealEnvironmentField.getText());
-        String certificatePath = normalizeText(nfeRealCertificatePathField.getText());
-        String certificatePassword = normalizeText(nfeRealCertificatePasswordField.getText());
+        try {
+            NFeProviderSetupRequest request = new NFeProviderSetupRequest(
+                nfeProviderComboBox == null ? null : normalizeText(nfeProviderComboBox.getValue()),
+                normalizeText(nfeRealEnvironmentField.getText()),
+                normalizeText(nfeRealCertificatePathField.getText()),
+                normalizeText(nfeRealCertificatePasswordField.getText())
+            );
 
-        if (provider == null || provider.isEmpty()) {
-            setRealNFeFeedback("Provider name is required for EPIC 7 setup");
-            return;
+            String summary = nfeProviderConfigurationService.validateAndBuildSummary(request, nfeMockEnabled);
+            nfeRealPreparationNotesArea.setText(summary);
+            setRealNFeFeedback("EPIC 7.2 setup validated. Provider flow is ready for concrete adapter wiring.");
+        } catch (IllegalArgumentException exception) {
+            setRealNFeFeedback(exception.getMessage());
         }
-
-        if (environment == null || environment.isEmpty()) {
-            setRealNFeFeedback("Environment is required for EPIC 7 setup");
-            return;
-        }
-
-        if (certificatePath == null || certificatePath.isEmpty()) {
-            setRealNFeFeedback("Certificate path is required for EPIC 7 setup");
-            return;
-        }
-
-        if (certificatePassword == null || certificatePassword.isEmpty()) {
-            setRealNFeFeedback("Certificate password is required for EPIC 7 setup");
-            return;
-        }
-
-        nfeRealPreparationNotesArea.setText(
-            "Provider: " + provider + "\n"
-                + "Environment: " + environment + "\n"
-                + "Certificate: " + certificatePath + "\n"
-                + "Password: configured\n\n"
-                + "Next step: wire the real NFe adapter behind the same NFeService contract."
-        );
-        setRealNFeFeedback("EPIC 7 setup captured. The mock tab remains controlled by the feature flag.");
     }
 
     @FXML

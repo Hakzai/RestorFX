@@ -32,8 +32,10 @@ What has started:
 - EPIC 7 kickoff details are tracked in `iterations/iteration-07-epic-7/README.md`.
 - Provider selection (`MOCK` / `REAL_STUB`) now applies at runtime via `NFeServiceFactory`.
 - A `RealNFeService` stub adapter is now wired for initial non-mock provider flow.
+- EPIC 7.2 moved setup validation from controller to service (`NFeProviderConfigurationService`).
+- Hibernate Validator was added to reduce custom validation code and keep layers clean.
 
 What is next:
 
 - Replace `RealNFeService` stub with concrete provider adapter logic.
-- Add secure certificate handling and provider-specific configuration validation.
+- Improve secure certificate handling lifecycle and add provider-specific configuration validation rules.
