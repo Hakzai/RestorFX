@@ -35,7 +35,7 @@ mvn clean compile
 2. Run app (example):
 
 ```bash
-java -cp target/classes com.example.restaurant.App
+java -cp target/classes com.akeir.restaurant.App
 ```
 
 ## Epic roadmap

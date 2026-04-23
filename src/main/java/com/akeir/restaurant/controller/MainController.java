@@ -1,4 +1,4 @@
-package com.example.restaurant.controller;
+package com.akeir.restaurant.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

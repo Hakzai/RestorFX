@@ -24,7 +24,7 @@ restaurant-management/
 │── pom.xml
 │── src/
 │   ├── main/
-│   │   ├── java/com/example/restaurant/
+│   │   ├── java/com/akeir/restaurant/
 │   │   │   ├── App.java
 │   │   │   ├── config/
 │   │   │   ├── controller/
@@ -53,7 +53,7 @@ restaurant-management/
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId>
+    <groupId>com.akeir</groupId>
     <artifactId>restaurant-management</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -107,7 +107,7 @@ restaurant-management/
 ### App.java
 
 ```java
-package com.example.restaurant;
+package com.akeir.restaurant;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

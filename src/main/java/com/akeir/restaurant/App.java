@@ -1,4 +1,4 @@
-package com.example.restaurant;
+package com.akeir.restaurant;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

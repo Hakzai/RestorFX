@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.restaurant.controller.MainController"
+            fx:controller="com.akeir.restaurant.controller.MainController"
             prefHeight="600.0"
             prefWidth="900.0"
             styleClass="root-layout">
