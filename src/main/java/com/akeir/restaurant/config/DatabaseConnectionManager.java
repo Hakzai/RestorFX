@@ -9,8 +9,10 @@ import java.sql.SQLException;
 
 public final class DatabaseConnectionManager {
 
-    private static final String DATABASE_DIRECTORY = "db";
-    private static final String DATABASE_FILE_NAME = "restaurant.db";
+    private static final String DEFAULT_DATABASE_DIRECTORY = "db";
+    private static final String DEFAULT_DATABASE_FILE_NAME = "restaurant.db";
+    private static final String PROPERTY_DATABASE_DIRECTORY = "restaurant.db.directory";
+    private static final String PROPERTY_DATABASE_FILE_NAME = "restaurant.db.file";
 
     private DatabaseConnectionManager() {
     }
@@ -24,9 +26,12 @@ public final class DatabaseConnectionManager {
 
     private static Path ensureDatabasePath() throws SQLException {
         try {
-            Path directoryPath = Paths.get(DATABASE_DIRECTORY);
+            String databaseDirectory = System.getProperty(PROPERTY_DATABASE_DIRECTORY, DEFAULT_DATABASE_DIRECTORY);
+            String databaseFileName = System.getProperty(PROPERTY_DATABASE_FILE_NAME, DEFAULT_DATABASE_FILE_NAME);
+
+            Path directoryPath = Paths.get(databaseDirectory);
             Files.createDirectories(directoryPath);
-            return directoryPath.resolve(DATABASE_FILE_NAME);
+            return directoryPath.resolve(databaseFileName);
         } catch (Exception exception) {
             throw new SQLException("Failed to prepare SQLite database path", exception);
         }

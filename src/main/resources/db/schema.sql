@@ -42,3 +42,16 @@ CREATE TABLE IF NOT EXISTS order_item (
 CREATE INDEX IF NOT EXISTS idx_order_header_customer_id ON order_header(customer_id);
 CREATE INDEX IF NOT EXISTS idx_order_item_order_id ON order_item(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_item_menu_item_id ON order_item(menu_item_id);
+
+-- EPIC 3 sample seed data (idempotent)
+INSERT INTO menu_item (name, description, price_cents, active)
+SELECT 'Classic Burger', 'Beef burger with fries', 2890, 1
+WHERE NOT EXISTS (
+    SELECT 1 FROM menu_item WHERE name = 'Classic Burger'
+);
+
+INSERT INTO menu_item (name, description, price_cents, active)
+SELECT 'Lemon Soda', 'Refreshing sparkling drink', 790, 1
+WHERE NOT EXISTS (
+    SELECT 1 FROM menu_item WHERE name = 'Lemon Soda'
+);

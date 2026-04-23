@@ -1,16 +1,17 @@
-# Restaurant Management - Iteration 2 (EPIC 2)
+# Restaurant Management - Iteration 3 (EPIC 3)
 
 ## Scope of this iteration
 
-This iteration focuses on **EPIC 2 - Database Layer**.
+This iteration focuses on **EPIC 3 - Menu Management MVP**.
 
 Implemented in this iteration:
 
-- SQLite connection manager implementation
-- Database schema bootstrap on application startup
-- Initial relational schema for menu, customer, order header, and order items
-- Base repository abstraction for upcoming data access implementations
-- JavaFX startup status updated to show EPIC 2 readiness
+- MenuItem domain model implementation
+- MenuItem repository with SQLite CRUD methods
+- MenuItem service layer with basic validation
+- JavaFX menu management screen with list/add/edit/delete actions
+- Service and repository tests for EPIC 3 behavior
+- Idempotent sample seed data for menu items
 
 ## Tech stack
 
@@ -43,11 +44,17 @@ java -cp target/classes com.akeir.restaurant.App
 - The application creates a local SQLite database file in `db/restaurant.db` when it starts.
 - Schema initialization runs automatically using `src/main/resources/db/schema.sql`.
 
+4. Run tests:
+
+```bash
+mvn clean test
+```
+
 ## Epic roadmap
 
 - [x] EPIC 1 - Project Setup
 - [x] EPIC 2 - Database Layer
-- [ ] EPIC 3 - Menu Management
+- [x] EPIC 3 - Menu Management
 - [ ] EPIC 4 - Customer Management
 - [ ] EPIC 5 - Skipped
 - [ ] EPIC 6 - NFe Integration (Mock)
