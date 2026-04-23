@@ -1,23 +1,23 @@
-# Restaurant Management - Iteration 1 (EPIC 1)
+# Restaurant Management - Iteration 2 (EPIC 2)
 
 ## Scope of this iteration
 
-This first iteration focuses on **EPIC 1 - Project Setup**.
+This iteration focuses on **EPIC 2 - Database Layer**.
 
 Implemented in this iteration:
 
-- Maven project created in this repository
-- Java 8 compiler target configured
-- Base package and resource structure created
-- Dependencies added: SQLite, Lombok (provided), and SLF4J simple logger
-- Initial JavaFX window implemented (`App` + `main.fxml`)
+- SQLite connection manager implementation
+- Database schema bootstrap on application startup
+- Initial relational schema for menu, customer, order header, and order items
+- Base repository abstraction for upcoming data access implementations
+- JavaFX startup status updated to show EPIC 2 readiness
 
 ## Tech stack
 
 - Java 8
 - JavaFX
 - Maven
-- SQLite (planned in next epics)
+- SQLite
 
 ## Prerequisites
 
@@ -38,10 +38,15 @@ mvn clean compile
 java -cp target/classes com.akeir.restaurant.App
 ```
 
+3. Verify database bootstrap:
+
+- The application creates a local SQLite database file in `db/restaurant.db` when it starts.
+- Schema initialization runs automatically using `src/main/resources/db/schema.sql`.
+
 ## Epic roadmap
 
 - [x] EPIC 1 - Project Setup
-- [ ] EPIC 2 - Database Layer
+- [x] EPIC 2 - Database Layer
 - [ ] EPIC 3 - Menu Management
 - [ ] EPIC 4 - Customer Management
 - [ ] EPIC 5 - Skipped

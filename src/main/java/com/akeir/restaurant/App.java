@@ -1,5 +1,7 @@
 package com.akeir.restaurant;
 
+import com.akeir.restaurant.config.DatabaseInitializer;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,6 +9,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App extends Application {
+
+    @Override
+    public void init() {
+        DatabaseInitializer.initialize();
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {

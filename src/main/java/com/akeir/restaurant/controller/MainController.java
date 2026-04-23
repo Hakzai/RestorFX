@@ -14,6 +14,6 @@ public class MainController {
     @FXML
     public void initialize() {
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        subtitleLabel.setText("EPIC 1 bootstrap ready - " + now);
+        subtitleLabel.setText("EPIC 2 database bootstrap ready - " + now);
     }
 }
