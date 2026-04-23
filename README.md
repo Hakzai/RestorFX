@@ -19,6 +19,11 @@ Implemented in this iteration:
 - Maven
 - SQLite (planned in next epics)
 
+## Prerequisites
+
+- JDK 8 is required for the simplest setup (JavaFX is bundled in Java 8).
+- If using JDK 11+, configure JavaFX SDK/OpenJFX modules separately.
+
 ## How to run (Java 8 environment)
 
 1. Compile:
