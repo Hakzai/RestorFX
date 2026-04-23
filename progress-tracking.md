@@ -2,7 +2,7 @@
 
 ## Last Iteration
 
-Iteration: **6 (EPIC 6 - NFe Integration Mock MVP)**
+Iteration: **6.1 (EPIC 6 - NFe Mock Audit Persistence)**
 
 What was done:
 
@@ -11,7 +11,10 @@ What was done:
 - Mocked XML output is generated and logged for each emission attempt.
 - JavaFX gained an `NFe Mock` tab with emission form and XML preview area.
 - Customer selection can prefill NFe customer fields to speed up manual testing.
-- Unit tests were added for successful emission and validation failure scenarios.
+- Fiscal document persistence was added with `fiscal_document` schema, model, repository, and service.
+- Every successful NFe mock emission now records an auditable fiscal document row.
+- NFe tab now includes a recent audit history panel for quick verification.
+- Unit and repository tests now cover fiscal document persistence scenarios.
 
 What is next:
 

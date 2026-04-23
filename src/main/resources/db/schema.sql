@@ -43,6 +43,23 @@ CREATE INDEX IF NOT EXISTS idx_order_header_customer_id ON order_header(customer
 CREATE INDEX IF NOT EXISTS idx_order_item_order_id ON order_item(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_item_menu_item_id ON order_item(menu_item_id);
 
+CREATE TABLE IF NOT EXISTS fiscal_document (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    document_type TEXT NOT NULL,
+    status TEXT NOT NULL,
+    customer_name TEXT NOT NULL,
+    customer_document TEXT,
+    total_cents INTEGER NOT NULL,
+    access_key TEXT,
+    protocol TEXT,
+    xml TEXT,
+    error_message TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_fiscal_document_created_at ON fiscal_document(created_at);
+CREATE INDEX IF NOT EXISTS idx_fiscal_document_access_key ON fiscal_document(access_key);
+
 -- EPIC 3 sample seed data (idempotent)
 INSERT INTO menu_item (name, description, price_cents, active)
 SELECT 'Classic Burger', 'Beef burger with fries', 2890, 1

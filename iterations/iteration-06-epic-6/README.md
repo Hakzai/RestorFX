@@ -14,15 +14,24 @@ Deliver a first end-to-end mocked NFe emission flow, preserving clean architectu
 - Controller integration for emitting and clearing mocked NFe data
 - Unit tests covering happy path and input validation errors
 
+### EPIC 6.1 Additions (Audit Persistence)
+
+- New `fiscal_document` SQLite table for fiscal audit history
+- `FiscalDocument` model with repository/service support
+- NFe mock emission now persists an auditable fiscal document record
+- JavaFX NFe tab now shows recent fiscal records with manual refresh
+- Added repository and service tests for fiscal persistence flow
+
 ## Exit Criteria
 
-- NFe mock can be emitted from JavaFX without database writes
+- NFe mock can be emitted from JavaFX and recorded in audit persistence
 - Service validates required customer name and positive total amount
 - Mock output includes access key, protocol, and XML payload
-- `mvn clean test` passes with EPIC 6 tests included
+- Recent fiscal audit records are visible from the NFe screen
+- `mvn clean test` passes with EPIC 6 and EPIC 6.1 tests included
 
 ## Next Slice
 
 - Keep EPIC 5 intentionally skipped
 - Start EPIC 7 with real provider integration behind `NFeService`
-- Add persistence/auditing for fiscal document history when sales flow exists
+- Add failure-path audit entries for rejected/errored NFe attempts

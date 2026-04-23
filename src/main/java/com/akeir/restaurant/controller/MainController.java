@@ -15,8 +15,10 @@ import com.akeir.restaurant.dto.NFeEmissionResult;
 import com.akeir.restaurant.integration.nfe.MockNFeService;
 import com.akeir.restaurant.integration.nfe.NFeService;
 import com.akeir.restaurant.model.Customer;
+import com.akeir.restaurant.model.FiscalDocument;
 import com.akeir.restaurant.model.MenuItem;
 import com.akeir.restaurant.service.CustomerService;
+import com.akeir.restaurant.service.FiscalDocumentService;
 import com.akeir.restaurant.service.MenuItemService;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -37,6 +39,7 @@ public class MainController {
 
     private final MenuItemService menuItemService = new MenuItemService();
     private final CustomerService customerService = new CustomerService();
+    private final FiscalDocumentService fiscalDocumentService = new FiscalDocumentService();
     private final NFeService nfeService = new MockNFeService();
     private final ObservableList<MenuItem> menuItems = FXCollections.observableArrayList();
     private final ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
@@ -130,6 +133,9 @@ public class MainController {
     private TextArea nfeXmlOutputArea;
 
     @FXML
+    private TextArea nfeAuditHistoryArea;
+
+    @FXML
     private Label nfeFeedbackLabel;
 
     @FXML
@@ -146,6 +152,7 @@ public class MainController {
         activeCheckBox.setSelected(true);
         loadMenuItems();
         loadCustomers();
+        loadNFeAuditHistory();
     }
 
     @FXML
@@ -330,10 +337,15 @@ public class MainController {
             );
 
             NFeEmissionResult result = nfeService.emit(request);
+            FiscalDocument fiscalDocument = fiscalDocumentService.recordNFeSuccess(request, result);
             nfeXmlOutputArea.setText(result.getXml());
-            setNFeFeedback("NFe mock emitted - access key: " + result.getAccessKey(), true);
+            loadNFeAuditHistory();
+            setNFeFeedback("NFe mock emitted and audited (#" + fiscalDocument.getId() + ") - access key: " + result.getAccessKey(), true);
         } catch (IllegalArgumentException exception) {
             setNFeFeedback(exception.getMessage(), false);
+        } catch (SQLException exception) {
+            LOGGER.error("Failed to persist fiscal audit for NFe mock", exception);
+            setNFeFeedback("NFe emitted but fiscal audit persistence failed", false);
         } catch (RuntimeException exception) {
             LOGGER.error("Failed to emit NFe mock", exception);
             setNFeFeedback("Failed to emit NFe mock", false);
@@ -348,6 +360,11 @@ public class MainController {
         nfeNotesField.clear();
         nfeXmlOutputArea.clear();
         setNFeFeedback("NFe form cleared", true);
+    }
+
+    @FXML
+    public void onRefreshNFeAudit() {
+        loadNFeAuditHistory();
     }
 
     private void configureMenuTable() {
@@ -404,7 +421,40 @@ public class MainController {
             ? String.valueOf(allCustomers.size())
             : customers.size() + " of " + allCustomers.size();
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        subtitleLabel.setText("EPIC 6 NFe mock in progress - customers: " + customerScope + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
+        subtitleLabel.setText("EPIC 6.1 NFe mock audit trail - customers: " + customerScope + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
+    }
+
+    private void loadNFeAuditHistory() {
+        try {
+            List<FiscalDocument> recentDocuments = fiscalDocumentService.findRecent(8);
+            if (recentDocuments.isEmpty()) {
+                nfeAuditHistoryArea.setText("No fiscal documents emitted yet.");
+                return;
+            }
+
+            StringBuilder historyBuilder = new StringBuilder();
+            for (FiscalDocument fiscalDocument : recentDocuments) {
+                historyBuilder
+                    .append("#")
+                    .append(fiscalDocument.getId())
+                    .append(" | ")
+                    .append(valueOrDash(fiscalDocument.getCreatedAt()))
+                    .append(" | ")
+                    .append(valueOrDash(fiscalDocument.getStatus()))
+                    .append(" | ")
+                    .append(valueOrDash(fiscalDocument.getCustomerName()))
+                    .append(" | Total: ")
+                    .append(formatCents(fiscalDocument.getTotalCents()))
+                    .append(" | Key: ")
+                    .append(valueOrDash(fiscalDocument.getAccessKey()))
+                    .append("\n");
+            }
+
+            nfeAuditHistoryArea.setText(historyBuilder.toString().trim());
+        } catch (SQLException exception) {
+            LOGGER.error("Failed to load NFe audit history", exception);
+            nfeAuditHistoryArea.setText("Failed to load fiscal audit history.");
+        }
     }
 
     private void populateForm(MenuItem item) {

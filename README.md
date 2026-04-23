@@ -1,8 +1,8 @@
-# Restaurant Management - Iteration 6 (EPIC 6)
+# Restaurant Management - Iteration 6.1 (EPIC 6)
 
 ## Scope of this iteration
 
-This iteration focuses on **EPIC 6 - NFe Integration (Mock First)**.
+This iteration focuses on **EPIC 6.1 - NFe Mock Audit Persistence**.
 
 Implemented in this iteration:
 
@@ -11,7 +11,10 @@ Implemented in this iteration:
 - Mock NFe XML generation with basic customer/amount payload
 - XML logging for every mocked emission (for integration traceability)
 - New JavaFX `NFe Mock` tab to emit and preview mocked XML
+- Fiscal document audit persistence layer (`fiscal_document` table + repository/service)
+- NFe tab now shows recent fiscal audit records with refresh support
 - Unit tests covering mock emission output and input validation
+- Unit and repository tests covering fiscal document persistence behavior
 
 ## Tech stack
 

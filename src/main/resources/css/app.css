@@ -88,6 +88,11 @@
     -fx-font-size: 12px;
 }
 
+.audit-output-area {
+    -fx-font-family: "Consolas";
+    -fx-font-size: 11px;
+}
+
 .content-tabs {
     -fx-background-color: transparent;
 }

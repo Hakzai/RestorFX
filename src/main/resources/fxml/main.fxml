@@ -188,11 +188,22 @@
                                     <Label text="Mock XML Output" styleClass="section-title" />
                                     <TextArea fx:id="nfeXmlOutputArea"
                                               editable="false"
-                                              prefHeight="420.0"
+                                              prefHeight="260.0"
                                               prefWidth="500.0"
                                               wrapText="true"
                                               styleClass="xml-output-area"
                                               promptText="XML output will appear here after mock emission" />
+                                    <HBox spacing="8.0">
+                                        <Label text="Recent Audit Records" styleClass="field-label" />
+                                        <Button text="Refresh" styleClass="secondary-button" onAction="#onRefreshNFeAudit" />
+                                    </HBox>
+                                    <TextArea fx:id="nfeAuditHistoryArea"
+                                              editable="false"
+                                              prefHeight="150.0"
+                                              prefWidth="500.0"
+                                              wrapText="true"
+                                              styleClass="audit-output-area"
+                                              promptText="Recent fiscal records will appear here" />
                                 </children>
                                 <HBox.hgrow>
                                     <Priority fx:constant="ALWAYS" />
