@@ -1,18 +1,17 @@
-# Restaurant Management - Iteration 4 (EPIC 4)
+# Restaurant Management - Iteration 6 (EPIC 6)
 
 ## Scope of this iteration
 
-This iteration focuses on **EPIC 4 - Customer Management MVP**.
+This iteration focuses on **EPIC 6 - NFe Integration (Mock First)**.
 
 Implemented in this iteration:
 
-- Customer domain model implementation
-- Customer repository with SQLite CRUD methods
-- Customer service layer with validation and normalization
-- JavaFX customer management screen with list/add/edit/delete actions
-- EPIC 4.1 customer search/filter enhancement in the Customers tab
-- Service and repository tests for EPIC 4 behavior
-- Idempotent sample seed data for customers
+- NFe emission contract with `NFeService` interface
+- Mock integration adapter with `MockNFeService`
+- Mock NFe XML generation with basic customer/amount payload
+- XML logging for every mocked emission (for integration traceability)
+- New JavaFX `NFe Mock` tab to emit and preview mocked XML
+- Unit tests covering mock emission output and input validation
 
 ## Tech stack
 
@@ -58,7 +57,7 @@ mvn clean test
 - [x] EPIC 3 - Menu Management
 - [x] EPIC 4 - Customer Management
 - [ ] EPIC 5 - Skipped
-- [ ] EPIC 6 - NFe Integration (Mock)
+- [x] EPIC 6 - NFe Integration (Mock)
 - [ ] EPIC 7 - Real NFe Integration
 - [ ] EPIC 8 - Backup & Reliability
 - [ ] EPIC 9 - Packaging & Delivery

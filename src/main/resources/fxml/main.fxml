@@ -150,6 +150,57 @@
                         </HBox>
                     </content>
                 </Tab>
+
+                <Tab text="NFe Mock">
+                    <content>
+                        <HBox spacing="20.0" BorderPane.alignment="CENTER">
+                            <padding>
+                                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0" />
+                            </padding>
+
+                            <VBox spacing="10.0" styleClass="panel-card" prefWidth="340.0">
+                                <children>
+                                    <Label text="NFe Mock Form" styleClass="section-title" />
+
+                                    <Label text="Customer Name" styleClass="field-label" />
+                                    <TextField fx:id="nfeCustomerNameField" promptText="e.g. Maria Silva" />
+
+                                    <Label text="Customer Document" styleClass="field-label" />
+                                    <TextField fx:id="nfeCustomerDocumentField" promptText="e.g. 12345678910" />
+
+                                    <Label text="Total Amount" styleClass="field-label" />
+                                    <TextField fx:id="nfeTotalAmountField" promptText="e.g. 145.90" />
+
+                                    <Label text="Additional Notes" styleClass="field-label" />
+                                    <TextArea fx:id="nfeNotesField" prefRowCount="4" promptText="Optional fiscal notes" wrapText="true" />
+
+                                    <HBox spacing="8.0">
+                                        <Button text="Emit Mock NFe" styleClass="action-button" onAction="#onEmitNFeMock" />
+                                        <Button text="Clear" styleClass="secondary-button" onAction="#onClearNFeForm" />
+                                    </HBox>
+
+                                    <Label fx:id="nfeFeedbackLabel" styleClass="feedback-label" text="Fill the form and emit a mocked NFe" wrapText="true" />
+                                </children>
+                            </VBox>
+
+                            <VBox spacing="10.0" styleClass="panel-card">
+                                <children>
+                                    <Label text="Mock XML Output" styleClass="section-title" />
+                                    <TextArea fx:id="nfeXmlOutputArea"
+                                              editable="false"
+                                              prefHeight="420.0"
+                                              prefWidth="500.0"
+                                              wrapText="true"
+                                              styleClass="xml-output-area"
+                                              promptText="XML output will appear here after mock emission" />
+                                </children>
+                                <HBox.hgrow>
+                                    <Priority fx:constant="ALWAYS" />
+                                </HBox.hgrow>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Tab>
             </tabs>
         </TabPane>
     </center>

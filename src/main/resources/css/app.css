@@ -83,6 +83,11 @@
     -fx-text-fill: #5f6b7a;
 }
 
+.xml-output-area {
+    -fx-font-family: "Consolas";
+    -fx-font-size: 12px;
+}
+
 .content-tabs {
     -fx-background-color: transparent;
 }

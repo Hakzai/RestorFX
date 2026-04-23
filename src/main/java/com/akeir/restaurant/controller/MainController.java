@@ -10,6 +10,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.akeir.restaurant.dto.NFeEmissionRequest;
+import com.akeir.restaurant.dto.NFeEmissionResult;
+import com.akeir.restaurant.integration.nfe.MockNFeService;
+import com.akeir.restaurant.integration.nfe.NFeService;
 import com.akeir.restaurant.model.Customer;
 import com.akeir.restaurant.model.MenuItem;
 import com.akeir.restaurant.service.CustomerService;
@@ -33,6 +37,7 @@ public class MainController {
 
     private final MenuItemService menuItemService = new MenuItemService();
     private final CustomerService customerService = new CustomerService();
+    private final NFeService nfeService = new MockNFeService();
     private final ObservableList<MenuItem> menuItems = FXCollections.observableArrayList();
     private final ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
     private final ObservableList<Customer> customers = FXCollections.observableArrayList();
@@ -108,6 +113,24 @@ public class MainController {
 
     @FXML
     private Label customerFilterSummaryLabel;
+
+    @FXML
+    private TextField nfeCustomerNameField;
+
+    @FXML
+    private TextField nfeCustomerDocumentField;
+
+    @FXML
+    private TextField nfeTotalAmountField;
+
+    @FXML
+    private TextArea nfeNotesField;
+
+    @FXML
+    private TextArea nfeXmlOutputArea;
+
+    @FXML
+    private Label nfeFeedbackLabel;
 
     @FXML
     public void initialize() {
@@ -296,6 +319,37 @@ public class MainController {
         applyCustomerFilter();
     }
 
+    @FXML
+    public void onEmitNFeMock() {
+        try {
+            NFeEmissionRequest request = new NFeEmissionRequest(
+                normalizeText(nfeCustomerNameField.getText()),
+                normalizeNullableText(nfeCustomerDocumentField.getText()),
+                parsePriceToCents(nfeTotalAmountField.getText()),
+                normalizeNullableText(nfeNotesField.getText())
+            );
+
+            NFeEmissionResult result = nfeService.emit(request);
+            nfeXmlOutputArea.setText(result.getXml());
+            setNFeFeedback("NFe mock emitted - access key: " + result.getAccessKey(), true);
+        } catch (IllegalArgumentException exception) {
+            setNFeFeedback(exception.getMessage(), false);
+        } catch (RuntimeException exception) {
+            LOGGER.error("Failed to emit NFe mock", exception);
+            setNFeFeedback("Failed to emit NFe mock", false);
+        }
+    }
+
+    @FXML
+    public void onClearNFeForm() {
+        nfeCustomerNameField.clear();
+        nfeCustomerDocumentField.clear();
+        nfeTotalAmountField.clear();
+        nfeNotesField.clear();
+        nfeXmlOutputArea.clear();
+        setNFeFeedback("NFe form cleared", true);
+    }
+
     private void configureMenuTable() {
         idColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<Long>(cell.getValue().getId()));
         nameColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(cell.getValue().getName()));
@@ -350,7 +404,7 @@ public class MainController {
             ? String.valueOf(allCustomers.size())
             : customers.size() + " of " + allCustomers.size();
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        subtitleLabel.setText("EPIC 4.1 customer management - customers: " + customerScope + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
+        subtitleLabel.setText("EPIC 6 NFe mock in progress - customers: " + customerScope + " - active menu items: " + activeItems + " of " + menuItems.size() + " - " + now);
     }
 
     private void populateForm(MenuItem item) {
@@ -381,6 +435,13 @@ public class MainController {
         customerDocumentField.setText(valueOrEmpty(customer.getDocument()));
         customerPhoneField.setText(valueOrEmpty(customer.getPhone()));
         customerEmailField.setText(valueOrEmpty(customer.getEmail()));
+
+        if (nfeCustomerNameField.getText() == null || nfeCustomerNameField.getText().trim().isEmpty()) {
+            nfeCustomerNameField.setText(customer.getName());
+        }
+        if (nfeCustomerDocumentField.getText() == null || nfeCustomerDocumentField.getText().trim().isEmpty()) {
+            nfeCustomerDocumentField.setText(valueOrEmpty(customer.getDocument()));
+        }
     }
 
     private void clearCustomerForm() {
@@ -495,6 +556,15 @@ public class MainController {
             customerFeedbackLabel.setStyle("-fx-text-fill: #2f6b3f;");
         } else {
             customerFeedbackLabel.setStyle("-fx-text-fill: #8f1d21;");
+        }
+    }
+
+    private void setNFeFeedback(String message, boolean success) {
+        nfeFeedbackLabel.setText(message);
+        if (success) {
+            nfeFeedbackLabel.setStyle("-fx-text-fill: #2f6b3f;");
+        } else {
+            nfeFeedbackLabel.setStyle("-fx-text-fill: #8f1d21;");
         }
     }
 }

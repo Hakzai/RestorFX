@@ -2,20 +2,18 @@
 
 ## Last Iteration
 
-Iteration: **4 (EPIC 4 - Customer Management MVP)**
+Iteration: **6 (EPIC 6 - NFe Integration Mock MVP)**
 
 What was done:
 
-- Customer domain model was added with identity and contact fields.
-- CustomerRepository was implemented with SQLite CRUD operations plus total counting.
-- CustomerService was added with field normalization and validation rules.
-- JavaFX screen now has a dedicated Customers tab with add/edit/delete actions.
-- EPIC 4.1 usability enhancement added live customer search/filter by name, document, phone, and email.
-- MainController is wired to both menu and customer services with independent feedback states.
-- Service and repository tests for customer behavior were added.
-- Schema now contains idempotent sample customer data for better first-run experience.
+- NFe integration contract was introduced through `NFeService`.
+- `MockNFeService` now simulates emission with validation and mock authorization data.
+- Mocked XML output is generated and logged for each emission attempt.
+- JavaFX gained an `NFe Mock` tab with emission form and XML preview area.
+- Customer selection can prefill NFe customer fields to speed up manual testing.
+- Unit tests were added for successful emission and validation failure scenarios.
 
 What is next:
 
-- Start EPIC 6 with a mocked NFe integration service flow.
 - Keep EPIC 5 intentionally skipped.
+- Start EPIC 7 with a real NFe provider adapter behind the same `NFeService` contract.
