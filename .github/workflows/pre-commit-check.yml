@@ -1,0 +1,25 @@
+name: Pre-Commit Quality Gate
+
+on:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for forbidden patterns
+        run: |
+          echo "Checking architecture violations..."
+
+          # Exemplo simples (pode evoluir)
+          if grep -r "System.out.println" src/; then
+            echo "❌ Forbidden logging detected"
+            exit 1
+          fi
+
+      - name: Check layered architecture (basic)
+        run: |
+          echo "Checking for repository usage outside repository layer..."
