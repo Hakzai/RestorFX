@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1">
+
+    <!-- HEADER -->
+    <top>
+        <VBox spacing="5" style="-fx-background-color: #2c3e50;">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <Label text="Restaurant Management"
+                   style="-fx-font-size: 22px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+
+            <Label text="Menu Management"
+                   style="-fx-text-fill: #bdc3c7;"/>
+        </VBox>
+    </top>
+
+    <!-- CENTER CONTENT -->
+    <center>
+        <SplitPane dividerPositions="0.65">
+
+            <!-- LEFT: TABLE -->
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+
+                <Label text="Menu Items"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                <TableView fx:id="menuTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="ID" prefWidth="60"/>
+                        <TableColumn text="Name" prefWidth="200"/>
+                        <TableColumn text="Price" prefWidth="100"/>
+                        <TableColumn text="Active" prefWidth="80"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- RIGHT: FORM -->
+            <VBox spacing="15" style="-fx-background-color: #ecf0f1;">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+
+                <Label text="Item Details"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                <GridPane hgap="10" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="30"/>
+                        <ColumnConstraints percentWidth="70"/>
+                    </columnConstraints>
+
+                    <!-- Name -->
+                    <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="nameField"
+                               promptText="e.g. Burger"
+                               GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <!-- Description -->
+                    <Label text="Description:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextArea fx:id="descriptionField"
+                              prefRowCount="3"
+                              promptText="Optional details"
+                              GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <!-- Price -->
+                    <Label text="Price:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="priceField"
+                               promptText="e.g. 19.90"
+                               GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <!-- Active -->
+                    <Label text="Active:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <CheckBox fx:id="activeCheckBox"
+                              GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <!-- ACTION BUTTONS -->
+                <HBox spacing="10">
+                    <Button text="Save"
+                            fx:id="saveButton"
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white;"
+                            HBox.hgrow="ALWAYS"/>
+
+                    <Button text="Clear"
+                            fx:id="clearButton"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Button text="Delete"
+                            fx:id="deleteButton"
+                            style="-fx-background-color: #c0392b; -fx-text-fill: white;"
+                            HBox.hgrow="ALWAYS"/>
+                </HBox>
+
+            </VBox>
+
+        </SplitPane>
+    </center>
+
+</BorderPane>
