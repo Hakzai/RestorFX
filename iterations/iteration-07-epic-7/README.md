@@ -10,9 +10,9 @@ Start EPIC 7 by preparing the UI and runtime toggle strategy for real provider i
 - Added provider property support via `restaurant.nfe.provider`
 - Legacy JavaFX `NFe Mock` tab is now disable-able through the feature flag (without deletion)
 - Added a dedicated JavaFX `NFe Real` tab for provider and certificate setup inputs
-- Added provider selection (`MOCK` / `REAL_STUB`) in the EPIC 7 tab
+- Added provider selection (`MOCK` / `REAL_PROVIDER`) in the EPIC 7 tab
 - Added `NFeServiceFactory` + `NFeProvider` for runtime service resolution
-- Added `RealNFeService` stub adapter to prepare real integration path
+- Added `RealNFeService` concrete HTTP adapter with retry handling (Apache HttpClient)
 - Added controller handlers for EPIC 7 setup validation and setup note generation
 - Updated project docs to record the EPIC 7 kickoff scope
 - Added tests for feature flags, provider factory behavior, and real provider stub emission
@@ -31,6 +31,14 @@ Start EPIC 7 by preparing the UI and runtime toggle strategy for real provider i
 - Chosen: Hibernate Validator (`org.hibernate.validator:hibernate-validator`)
 - Why: stable ecosystem, standard bean validation API, reduces custom validation code, keeps controller thin
 
+### EPIC 7.3 Additions (Real Emission + Retries)
+
+- Evaluated libraries for provider call + retries: Apache HttpClient, OkHttp, manual `HttpURLConnection`
+- Chosen: Apache HttpClient (`org.apache.httpcomponents:httpclient`)
+- Why: stable Java 8 support, built-in retry extension points, clear HTTP client API
+- `RealNFeService` now sends XML to configured provider endpoint and retries transient HTTP failures
+- Added tests for retry success path and endpoint-missing failure path
+
 ## Exit Criteria
 
 - Legacy mock flow remains available by default for backward compatibility
@@ -41,7 +49,6 @@ Start EPIC 7 by preparing the UI and runtime toggle strategy for real provider i
 
 ## Next Slice
 
-- Replace `RealNFeService` stub with concrete provider adapter implementation
 - Improve secure certificate handling (avoid plain text entry/storage lifecycle) and provider-specific validation
 - Persist and surface failure-path audit entries for rejected/errored emissions
 - Add automated tests for provider switching from JavaFX controller actions

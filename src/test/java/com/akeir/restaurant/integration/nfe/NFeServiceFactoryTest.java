@@ -30,16 +30,25 @@ public class NFeServiceFactoryTest {
 
         NFeProvider provider = NFeServiceFactory.resolveDefaultProvider(false);
 
-        assertEquals(NFeProvider.REAL_STUB, provider);
+        assertEquals(NFeProvider.REAL_PROVIDER, provider);
     }
 
     @Test
     public void resolveDefaultProviderShouldHonorConfiguredProvider() {
+        System.setProperty(PROPERTY_NFE_PROVIDER, "REAL_PROVIDER");
+
+        NFeProvider provider = NFeServiceFactory.resolveDefaultProvider(true);
+
+        assertEquals(NFeProvider.REAL_PROVIDER, provider);
+    }
+
+    @Test
+    public void resolveDefaultProviderShouldMapLegacyRealStubProperty() {
         System.setProperty(PROPERTY_NFE_PROVIDER, "REAL_STUB");
 
         NFeProvider provider = NFeServiceFactory.resolveDefaultProvider(true);
 
-        assertEquals(NFeProvider.REAL_STUB, provider);
+        assertEquals(NFeProvider.REAL_PROVIDER, provider);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -50,7 +59,7 @@ public class NFeServiceFactoryTest {
     @Test
     public void createShouldReturnProviderImplementation() {
         NFeService mockService = NFeServiceFactory.create(NFeProvider.MOCK);
-        NFeService realStubService = NFeServiceFactory.create(NFeProvider.REAL_STUB);
+        NFeService realStubService = NFeServiceFactory.create(NFeProvider.REAL_PROVIDER);
 
         assertTrue(mockService instanceof MockNFeService);
         assertTrue(realStubService instanceof RealNFeService);

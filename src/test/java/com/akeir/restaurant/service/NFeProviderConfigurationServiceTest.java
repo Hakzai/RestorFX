@@ -13,13 +13,17 @@ import com.akeir.restaurant.dto.NFeProviderSetupRequest;
 
 public class NFeProviderConfigurationServiceTest {
 
+    private static final String PROPERTY_REAL_ENDPOINT = "restaurant.nfe.real.endpoint";
+    private static final String PROPERTY_REAL_CERTIFICATE_PATH = "restaurant.nfe.real.certificate.path";
+    private static final String PROPERTY_REAL_CERTIFICATE_PASSWORD = "restaurant.nfe.real.certificate.password";
+
     @Test
     public void validateAndBuildSummaryShouldAcceptValidPkcs12Setup() throws Exception {
         NFeProviderConfigurationService service = new NFeProviderConfigurationService();
         Path certificate = createPkcs12File("secret123");
         try {
             NFeProviderSetupRequest request = new NFeProviderSetupRequest(
-                "REAL_STUB",
+                "REAL_PROVIDER",
                 "homologation",
                 certificate.toString(),
                 "secret123"
@@ -27,10 +31,17 @@ public class NFeProviderConfigurationServiceTest {
 
             String summary = service.validateAndBuildSummary(request, true);
 
-            assertTrue(summary.contains("Provider: REAL_STUB"));
+            assertTrue(summary.contains("Provider: REAL_PROVIDER"));
             assertTrue(summary.contains("Environment: HOMOLOGATION"));
+            assertTrue(summary.contains("Endpoint: https://homologacao.nfe.fazenda.gov.br/ws/nfeautorizacao4.asmx"));
             assertTrue(summary.contains("Password: configured"));
+            assertTrue(certificate.toString().equals(System.getProperty(PROPERTY_REAL_CERTIFICATE_PATH)));
+            assertTrue("secret123".equals(System.getProperty(PROPERTY_REAL_CERTIFICATE_PASSWORD)));
+            assertTrue(System.getProperty(PROPERTY_REAL_ENDPOINT).contains("homologacao"));
         } finally {
+            System.clearProperty(PROPERTY_REAL_ENDPOINT);
+            System.clearProperty(PROPERTY_REAL_CERTIFICATE_PATH);
+            System.clearProperty(PROPERTY_REAL_CERTIFICATE_PASSWORD);
             Files.deleteIfExists(certificate);
         }
     }
@@ -39,7 +50,7 @@ public class NFeProviderConfigurationServiceTest {
     public void validateAndBuildSummaryShouldRejectMissingCertificateFile() {
         NFeProviderConfigurationService service = new NFeProviderConfigurationService();
         NFeProviderSetupRequest request = new NFeProviderSetupRequest(
-            "REAL_STUB",
+            "REAL_PROVIDER",
             "production",
             "target/test-db/non-existent-cert.p12",
             "secret123"
@@ -72,7 +83,7 @@ public class NFeProviderConfigurationServiceTest {
         Path certificate = createPkcs12File("secret123");
         try {
             NFeProviderSetupRequest request = new NFeProviderSetupRequest(
-                "REAL_STUB",
+                "REAL_PROVIDER",
                 "sandbox",
                 certificate.toString(),
                 "secret123"

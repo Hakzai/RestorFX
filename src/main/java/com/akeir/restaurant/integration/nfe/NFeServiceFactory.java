@@ -16,7 +16,7 @@ public final class NFeServiceFactory {
         if (nfeMockEnabled) {
             return NFeProvider.MOCK;
         }
-        return NFeProvider.REAL_STUB;
+        return NFeProvider.REAL_PROVIDER;
     }
 
     public static NFeProvider resolveProvider(String providerValue, boolean nfeMockEnabled) {
@@ -35,7 +35,7 @@ public final class NFeServiceFactory {
         switch (provider) {
             case MOCK:
                 return new MockNFeService();
-            case REAL_STUB:
+            case REAL_PROVIDER:
                 return new RealNFeService();
             default:
                 throw new IllegalArgumentException("Unsupported NFe provider: " + provider);

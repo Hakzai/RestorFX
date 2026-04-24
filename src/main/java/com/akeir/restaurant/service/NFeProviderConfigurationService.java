@@ -17,6 +17,12 @@ import com.akeir.restaurant.integration.nfe.NFeServiceFactory;
 
 public class NFeProviderConfigurationService {
 
+    private static final String PROPERTY_REAL_ENDPOINT = "restaurant.nfe.real.endpoint";
+    private static final String PROPERTY_REAL_CERTIFICATE_PATH = "restaurant.nfe.real.certificate.path";
+    private static final String PROPERTY_REAL_CERTIFICATE_PASSWORD = "restaurant.nfe.real.certificate.password";
+    private static final String PROPERTY_REAL_TIMEOUT_MS = "restaurant.nfe.real.timeout.ms";
+    private static final String PROPERTY_REAL_MAX_RETRIES = "restaurant.nfe.real.max-retries";
+
     private final Validator validator;
 
     public NFeProviderConfigurationService() {
@@ -45,11 +51,42 @@ public class NFeProviderConfigurationService {
 
         validateCertificate(certificatePath, certificatePassword);
 
+        String endpoint = resolveEndpoint(provider, environment);
+        applyRuntimeConfiguration(provider, endpoint, certificatePath, certificatePassword);
+
         return "Provider: " + provider.name() + "\n"
             + "Environment: " + environment + "\n"
+            + "Endpoint: " + endpoint + "\n"
             + "Certificate: " + certificatePath + "\n"
             + "Password: configured\n\n"
             + "Next step: wire the concrete real provider adapter behind NFeService.";
+    }
+
+    private String resolveEndpoint(NFeProvider provider, String environment) {
+        if (provider == NFeProvider.MOCK) {
+            return "mock://local";
+        }
+
+        if ("HOMOLOGATION".equals(environment)) {
+            return "https://homologacao.nfe.fazenda.gov.br/ws/nfeautorizacao4.asmx";
+        }
+        return "https://nfe.fazenda.gov.br/ws/nfeautorizacao4.asmx";
+    }
+
+    private void applyRuntimeConfiguration(NFeProvider provider, String endpoint, String certificatePath, String certificatePassword) {
+        if (provider != NFeProvider.REAL_PROVIDER) {
+            return;
+        }
+
+        System.setProperty(PROPERTY_REAL_ENDPOINT, endpoint);
+        System.setProperty(PROPERTY_REAL_CERTIFICATE_PATH, certificatePath);
+        System.setProperty(PROPERTY_REAL_CERTIFICATE_PASSWORD, certificatePassword);
+        if (System.getProperty(PROPERTY_REAL_TIMEOUT_MS) == null) {
+            System.setProperty(PROPERTY_REAL_TIMEOUT_MS, "5000");
+        }
+        if (System.getProperty(PROPERTY_REAL_MAX_RETRIES) == null) {
+            System.setProperty(PROPERTY_REAL_MAX_RETRIES, "2");
+        }
     }
 
     private void validateCertificate(String certificatePath, String certificatePassword) {

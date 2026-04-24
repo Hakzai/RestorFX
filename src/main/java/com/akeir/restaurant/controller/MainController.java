@@ -499,7 +499,7 @@ public class MainController {
             if (nfeMockEnabled) {
                 providers.add(NFeProvider.MOCK.name());
             }
-            providers.add(NFeProvider.REAL_STUB.name());
+            providers.add(NFeProvider.REAL_PROVIDER.name());
             nfeProviderComboBox.setItems(providers);
             nfeProviderComboBox.setValue(activeNFeProvider.name());
         }

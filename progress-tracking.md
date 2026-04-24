@@ -30,12 +30,12 @@ What has started:
 - Legacy mock UI flow is now controlled by `restaurant.feature.nfe.mock.enabled`.
 - A dedicated `NFe Real` tab was added for provider and certificate setup.
 - EPIC 7 kickoff details are tracked in `iterations/iteration-07-epic-7/README.md`.
-- Provider selection (`MOCK` / `REAL_STUB`) now applies at runtime via `NFeServiceFactory`.
-- A `RealNFeService` stub adapter is now wired for initial non-mock provider flow.
+- Provider selection (`MOCK` / `REAL_PROVIDER`) now applies at runtime via `NFeServiceFactory`.
+- `RealNFeService` now performs concrete HTTP emission using Apache HttpClient with retry strategy.
 - EPIC 7.2 moved setup validation from controller to service (`NFeProviderConfigurationService`).
 - Hibernate Validator was added to reduce custom validation code and keep layers clean.
 
 What is next:
 
-- Replace `RealNFeService` stub with concrete provider adapter logic.
 - Improve secure certificate handling lifecycle and add provider-specific configuration validation rules.
+- Add explicit UI controls for retry count and timeout configuration.

@@ -3,7 +3,7 @@ package com.akeir.restaurant.integration.nfe;
 public enum NFeProvider {
 
     MOCK,
-    REAL_STUB;
+    REAL_PROVIDER;
 
     public static NFeProvider fromValue(String rawValue) {
         if (rawValue == null || rawValue.trim().isEmpty()) {
@@ -11,8 +11,8 @@ public enum NFeProvider {
         }
 
         String normalized = rawValue.trim().toUpperCase().replace('-', '_').replace(' ', '_');
-        if ("REAL".equals(normalized)) {
-            normalized = "REAL_STUB";
+        if ("REAL".equals(normalized) || "REAL_STUB".equals(normalized)) {
+            normalized = "REAL_PROVIDER";
         }
 
         try {
