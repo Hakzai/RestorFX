@@ -211,9 +211,6 @@ SpringBoot --> Docker
 
 ---
 
-### EPIC 5 - Skipped
-
-<!-- This will not be implemented right now, skip it
 ### EPIC 5 - Order / Sales Flow (Basic)
 
 * Create Order model
@@ -221,7 +218,6 @@ SpringBoot --> Docker
 * Implement OrderService
 * Create simple order screen
 * Persist orders
--->
 
 ---
 
