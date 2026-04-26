@@ -18,7 +18,7 @@ What was done:
 
 What is next:
 
-- Keep EPIC 5 intentionally skipped.
+- EPIC 5 order / sales flow has now started and is being implemented as a late-start slice.
 - Start EPIC 7 with a real NFe provider adapter behind the same `NFeService` contract.
 
 ## Current Iteration (In Progress)

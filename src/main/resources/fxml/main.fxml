@@ -152,6 +152,77 @@
                     </content>
                 </Tab>
 
+                <Tab text="Orders">
+                    <content>
+                        <HBox spacing="20.0" BorderPane.alignment="CENTER">
+                            <padding>
+                                <Insets top="24.0" right="24.0" bottom="24.0" left="24.0" />
+                            </padding>
+
+                            <VBox spacing="10.0" styleClass="panel-card">
+                                <children>
+                                    <Label text="Orders" styleClass="section-title" />
+                                    <HBox spacing="8.0">
+                                        <Label text="Recent Orders" styleClass="field-label" />
+                                        <Button text="Refresh" styleClass="secondary-button" onAction="#onRefreshOrders" />
+                                    </HBox>
+                                    <TableView fx:id="orderTable" prefHeight="420.0" prefWidth="560.0">
+                                        <columns>
+                                            <TableColumn fx:id="orderIdColumn" prefWidth="60.0" text="ID" />
+                                            <TableColumn fx:id="orderCustomerColumn" prefWidth="160.0" text="Customer" />
+                                            <TableColumn fx:id="orderStatusColumn" prefWidth="110.0" text="Status" />
+                                            <TableColumn fx:id="orderTotalColumn" prefWidth="100.0" text="Total" />
+                                            <TableColumn fx:id="orderIssuedAtColumn" prefWidth="130.0" text="Issued At" />
+                                        </columns>
+                                    </TableView>
+                                </children>
+                                <HBox.hgrow>
+                                    <Priority fx:constant="ALWAYS" />
+                                </HBox.hgrow>
+                            </VBox>
+
+                            <VBox spacing="10.0" styleClass="panel-card" prefWidth="340.0">
+                                <children>
+                                    <Label text="New Order" styleClass="section-title" />
+
+                                    <Label text="Customer" styleClass="field-label" />
+                                    <ComboBox fx:id="orderCustomerComboBox" promptText="Optional customer" />
+
+                                    <Label text="Menu Item" styleClass="field-label" />
+                                    <ComboBox fx:id="orderMenuItemComboBox" promptText="Select item" />
+
+                                    <Label text="Quantity" styleClass="field-label" />
+                                    <TextField fx:id="orderQuantityField" promptText="e.g. 2" />
+
+                                    <HBox spacing="8.0">
+                                        <Button text="Add Item" styleClass="action-button" onAction="#onAddPendingOrderItem" />
+                                        <Button text="Remove Item" styleClass="danger-button" onAction="#onRemovePendingOrderItem" />
+                                    </HBox>
+
+                                    <Label fx:id="orderSummaryLabel" styleClass="support-label" text="Pending items: 0 | Total: 0.00" />
+
+                                    <TableView fx:id="pendingOrderTable" prefHeight="220.0" prefWidth="320.0">
+                                        <columns>
+                                            <TableColumn fx:id="pendingOrderItemIdColumn" prefWidth="50.0" text="ID" />
+                                            <TableColumn fx:id="pendingOrderMenuItemColumn" prefWidth="120.0" text="Item" />
+                                            <TableColumn fx:id="pendingOrderQuantityColumn" prefWidth="60.0" text="Qty" />
+                                            <TableColumn fx:id="pendingOrderUnitPriceColumn" prefWidth="70.0" text="Unit" />
+                                            <TableColumn fx:id="pendingOrderTotalColumn" prefWidth="70.0" text="Total" />
+                                        </columns>
+                                    </TableView>
+
+                                    <HBox spacing="8.0">
+                                        <Button text="Save Order" styleClass="action-button" onAction="#onSaveOrder" />
+                                        <Button text="Clear" styleClass="secondary-button" onAction="#onClearOrderForm" />
+                                    </HBox>
+
+                                    <Label fx:id="orderFeedbackLabel" styleClass="feedback-label" text="Build an order by adding menu items and then saving it" wrapText="true" />
+                                </children>
+                            </VBox>
+                        </HBox>
+                    </content>
+                </Tab>
+
                 <Tab fx:id="nfeMockTab" text="NFe Mock">
                     <content>
                         <HBox spacing="20.0" BorderPane.alignment="CENTER">

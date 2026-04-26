@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,9 +21,12 @@ import com.akeir.restaurant.integration.nfe.NFeService;
 import com.akeir.restaurant.model.Customer;
 import com.akeir.restaurant.model.FiscalDocument;
 import com.akeir.restaurant.model.MenuItem;
+import com.akeir.restaurant.model.Order;
+import com.akeir.restaurant.model.OrderItem;
 import com.akeir.restaurant.service.CustomerService;
 import com.akeir.restaurant.service.FiscalDocumentService;
 import com.akeir.restaurant.service.MenuItemService;
+import com.akeir.restaurant.service.OrderService;
 import com.akeir.restaurant.service.NFeProviderConfigurationService;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -47,11 +51,16 @@ public class MainController {
     private final MenuItemService menuItemService = new MenuItemService();
     private final CustomerService customerService = new CustomerService();
     private final FiscalDocumentService fiscalDocumentService = new FiscalDocumentService();
+    private final OrderService orderService = new OrderService();
     private final NFeProviderConfigurationService nfeProviderConfigurationService = new NFeProviderConfigurationService();
     private final boolean nfeMockEnabled = FeatureFlags.isNFeMockEnabled();
     private final ObservableList<MenuItem> menuItems = FXCollections.observableArrayList();
     private final ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
     private final ObservableList<Customer> customers = FXCollections.observableArrayList();
+    private final ObservableList<MenuItem> orderMenuItems = FXCollections.observableArrayList();
+    private final ObservableList<Customer> orderCustomers = FXCollections.observableArrayList();
+    private final ObservableList<Order> orders = FXCollections.observableArrayList();
+    private final ObservableList<OrderItem> pendingOrderItems = FXCollections.observableArrayList();
     private NFeProvider activeNFeProvider;
     private NFeService nfeService;
 
@@ -66,6 +75,57 @@ public class MainController {
 
     @FXML
     private Tab nfeRealTab;
+
+    @FXML
+    private TableView<Order> orderTable;
+
+    @FXML
+    private TableColumn<Order, Long> orderIdColumn;
+
+    @FXML
+    private TableColumn<Order, String> orderCustomerColumn;
+
+    @FXML
+    private TableColumn<Order, String> orderStatusColumn;
+
+    @FXML
+    private TableColumn<Order, String> orderTotalColumn;
+
+    @FXML
+    private TableColumn<Order, String> orderIssuedAtColumn;
+
+    @FXML
+    private ComboBox<Customer> orderCustomerComboBox;
+
+    @FXML
+    private ComboBox<MenuItem> orderMenuItemComboBox;
+
+    @FXML
+    private TextField orderQuantityField;
+
+    @FXML
+    private TableView<OrderItem> pendingOrderTable;
+
+    @FXML
+    private TableColumn<OrderItem, Long> pendingOrderItemIdColumn;
+
+    @FXML
+    private TableColumn<OrderItem, String> pendingOrderMenuItemColumn;
+
+    @FXML
+    private TableColumn<OrderItem, String> pendingOrderQuantityColumn;
+
+    @FXML
+    private TableColumn<OrderItem, String> pendingOrderUnitPriceColumn;
+
+    @FXML
+    private TableColumn<OrderItem, String> pendingOrderTotalColumn;
+
+    @FXML
+    private Label orderSummaryLabel;
+
+    @FXML
+    private Label orderFeedbackLabel;
 
     @FXML
     private TableView<MenuItem> menuTable;
@@ -179,11 +239,14 @@ public class MainController {
     public void initialize() {
         configureMenuTable();
         configureCustomerTable();
+        configureOrderTables();
         initializeNFeProviderSelection();
         configureNFeTabs();
 
         menuTable.setItems(menuItems);
         customerTable.setItems(customers);
+        orderTable.setItems(orders);
+        pendingOrderTable.setItems(pendingOrderItems);
 
         menuTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> populateForm(newValue));
         customerTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> populateCustomerForm(newValue));
@@ -191,6 +254,8 @@ public class MainController {
         activeCheckBox.setSelected(true);
         loadMenuItems();
         loadCustomers();
+        loadOrders();
+        updatePendingOrderSummary();
         loadNFeAuditHistory();
     }
 
@@ -366,6 +431,94 @@ public class MainController {
     }
 
     @FXML
+    public void onAddPendingOrderItem() {
+        MenuItem selectedMenuItem = orderMenuItemComboBox == null ? null : orderMenuItemComboBox.getValue();
+        if (selectedMenuItem == null || selectedMenuItem.getId() == null) {
+            setOrderFeedback("Select a menu item before adding it", false);
+            return;
+        }
+
+        int quantity = parsePositiveQuantity(orderQuantityField.getText());
+        OrderItem orderItem = new OrderItem(
+            null,
+            null,
+            selectedMenuItem.getId(),
+            selectedMenuItem.getName(),
+            quantity,
+            selectedMenuItem.getPriceCents(),
+            selectedMenuItem.getPriceCents() * quantity
+        );
+
+        pendingOrderItems.add(orderItem);
+        orderQuantityField.clear();
+        if (orderMenuItemComboBox != null) {
+            orderMenuItemComboBox.getSelectionModel().clearSelection();
+        }
+        updatePendingOrderSummary();
+        setOrderFeedback("Added " + quantity + " x " + selectedMenuItem.getName(), true);
+    }
+
+    @FXML
+    public void onRemovePendingOrderItem() {
+        OrderItem selectedItem = pendingOrderTable.getSelectionModel().getSelectedItem();
+        if (selectedItem == null) {
+            setOrderFeedback("Select a pending item before removing it", false);
+            return;
+        }
+
+        pendingOrderItems.remove(selectedItem);
+        updatePendingOrderSummary();
+        setOrderFeedback("Pending item removed", true);
+    }
+
+    @FXML
+    public void onSaveOrder() {
+        if (pendingOrderItems.isEmpty()) {
+            setOrderFeedback("Add at least one item before saving the order", false);
+            return;
+        }
+
+        Customer selectedCustomer = orderCustomerComboBox == null ? null : orderCustomerComboBox.getValue();
+        Long customerId = selectedCustomer == null ? null : selectedCustomer.getId();
+
+        try {
+            Order createdOrder = orderService.create(customerId, new ArrayList<OrderItem>(pendingOrderItems));
+            pendingOrderItems.clear();
+            updatePendingOrderSummary();
+            loadOrders();
+            if (orderMenuItemComboBox != null) {
+                orderMenuItemComboBox.getSelectionModel().clearSelection();
+            }
+            orderQuantityField.clear();
+            setOrderFeedback("Order #" + createdOrder.getId() + " saved with total " + formatCents(createdOrder.getTotalCents()), true);
+        } catch (IllegalArgumentException exception) {
+            setOrderFeedback(exception.getMessage(), false);
+        } catch (SQLException exception) {
+            LOGGER.error("Failed to persist order", exception);
+            setOrderFeedback("Failed to save order", false);
+        }
+    }
+
+    @FXML
+    public void onRefreshOrders() {
+        loadOrders();
+    }
+
+    @FXML
+    public void onClearOrderForm() {
+        pendingOrderItems.clear();
+        updatePendingOrderSummary();
+        if (orderCustomerComboBox != null) {
+            orderCustomerComboBox.getSelectionModel().clearSelection();
+        }
+        if (orderMenuItemComboBox != null) {
+            orderMenuItemComboBox.getSelectionModel().clearSelection();
+        }
+        orderQuantityField.clear();
+        setOrderFeedback("Order form cleared", true);
+    }
+
+    @FXML
     public void onEmitNFeMock() {
         if (nfeService == null) {
             setNFeFeedback("Select an NFe provider before emission", false);
@@ -513,14 +666,30 @@ public class MainController {
         customerEmailColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(valueOrDash(cell.getValue().getEmail())));
     }
 
+    private void configureOrderTables() {
+        orderIdColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<Long>(cell.getValue().getId()));
+        orderCustomerColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(valueOrDash(cell.getValue().getCustomerName())));
+        orderStatusColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(valueOrDash(cell.getValue().getStatus())));
+        orderTotalColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(formatCents(cell.getValue().getTotalCents())));
+        orderIssuedAtColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(valueOrDash(cell.getValue().getIssuedAt())));
+
+        pendingOrderItemIdColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<Long>(cell.getValue().getId()));
+        pendingOrderMenuItemColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(valueOrDash(cell.getValue().getMenuItemName())));
+        pendingOrderQuantityColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(String.valueOf(cell.getValue().getQuantity())));
+        pendingOrderUnitPriceColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(formatCents(cell.getValue().getUnitPriceCents())));
+        pendingOrderTotalColumn.setCellValueFactory(cell -> new ReadOnlyStringWrapper(formatCents(cell.getValue().getTotalPriceCents())));
+    }
+
     private void loadMenuItems() {
         try {
             List<MenuItem> items = menuItemService.findAll();
             menuItems.setAll(items);
+            refreshOrderSelections();
             updateSubtitle();
         } catch (SQLException exception) {
             LOGGER.error("Failed to load menu items", exception);
             setMenuFeedback("Failed to load menu items", false);
+            refreshOrderSelections();
             updateSubtitle();
         }
     }
@@ -529,14 +698,31 @@ public class MainController {
         try {
             List<Customer> loadedCustomers = customerService.findAll();
             allCustomers.setAll(loadedCustomers);
+            orderCustomers.setAll(loadedCustomers);
             applyCustomerFilter();
+            refreshOrderSelections();
         } catch (SQLException exception) {
             LOGGER.error("Failed to load customers", exception);
             setCustomerFeedback("Failed to load customers", false);
             allCustomers.clear();
+            orderCustomers.clear();
             customers.clear();
             updateCustomerFilterSummary();
+            refreshOrderSelections();
             updateSubtitle();
+        }
+    }
+
+    private void loadOrders() {
+        try {
+            List<Order> recentOrders = orderService.findRecent(10);
+            orders.setAll(recentOrders);
+            updateOrderSummary();
+        } catch (SQLException exception) {
+            LOGGER.error("Failed to load orders", exception);
+            setOrderFeedback("Failed to load orders", false);
+            orders.clear();
+            updateOrderSummary();
         }
     }
 
@@ -675,6 +861,57 @@ public class MainController {
         customerFilterSummaryLabel.setText("Showing " + customers.size() + " of " + allCustomers.size() + " customers");
     }
 
+    private void refreshOrderSelections() {
+        orderMenuItems.clear();
+        for (MenuItem menuItem : menuItems) {
+            if (menuItem.isActive()) {
+                orderMenuItems.add(menuItem);
+            }
+        }
+
+        if (orderMenuItemComboBox != null) {
+            orderMenuItemComboBox.setItems(orderMenuItems);
+        }
+
+        if (orderCustomerComboBox != null) {
+            orderCustomerComboBox.setItems(orderCustomers);
+        }
+    }
+
+    private void updateOrderSummary() {
+        if (orderSummaryLabel == null) {
+            return;
+        }
+
+        int pendingTotal = 0;
+        for (OrderItem orderItem : pendingOrderItems) {
+            pendingTotal += orderItem.getTotalPriceCents();
+        }
+
+        orderSummaryLabel.setText("Pending items: " + pendingOrderItems.size() + " | Total: " + formatCents(pendingTotal));
+    }
+
+    private void updatePendingOrderSummary() {
+        updateOrderSummary();
+    }
+
+    private int parsePositiveQuantity(String rawQuantity) {
+        String normalized = normalizeText(rawQuantity);
+        if (normalized == null || normalized.isEmpty()) {
+            throw new IllegalArgumentException("Quantity is required");
+        }
+
+        try {
+            int quantity = Integer.parseInt(normalized);
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("Quantity must be greater than zero");
+            }
+            return quantity;
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("Quantity format is invalid");
+        }
+    }
+
     private int parsePriceToCents(String rawPrice) {
         String normalized = normalizeText(rawPrice);
         if (normalized == null || normalized.isEmpty()) {
@@ -743,6 +980,15 @@ public class MainController {
             customerFeedbackLabel.setStyle("-fx-text-fill: #2f6b3f;");
         } else {
             customerFeedbackLabel.setStyle("-fx-text-fill: #8f1d21;");
+        }
+    }
+
+    private void setOrderFeedback(String message, boolean success) {
+        orderFeedbackLabel.setText(message);
+        if (success) {
+            orderFeedbackLabel.setStyle("-fx-text-fill: #2f6b3f;");
+        } else {
+            orderFeedbackLabel.setStyle("-fx-text-fill: #8f1d21;");
         }
     }
 
