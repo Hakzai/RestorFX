@@ -7,17 +7,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    ## For default runner usage
+    # runs-on: ubuntu-latest
+    ## For self-hosted runner usage
+    runs-on: self-hosted
+
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Setup Java (Liberica Full JDK with JavaFX)
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: 'liberica'
           java-version: '8'
+          java-package: 'jdk+fx'
 
       - name: Build
         run: mvn clean install
