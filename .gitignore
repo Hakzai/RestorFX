@@ -1,6 +1,12 @@
+## Build and IDE files
 target/
 .idea/
 .vscode/
 *.iml
 *.log
+
+## Database files
 db/restaurant.db
+
+## GIT Diffs
+git_diff*.txt

@@ -58,4 +58,13 @@ public class MenuItem {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    @Override
+    public String toString() {
+        if (name == null) {
+            return "Menu item";
+        }
+
+        return name + " - " + String.format("%.2f", Double.valueOf(priceCents) / 100.0d);
+    }
 }

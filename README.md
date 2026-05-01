@@ -1,20 +1,19 @@
-# Restaurant Management - Iteration 6.1 (EPIC 6)
+# Restaurant Management
 
-## Scope of this iteration
+Current state:
 
-This iteration focuses on **EPIC 6.1 - NFe Mock Audit Persistence**.
+- EPIC 5 is complete with the order / sales flow implemented.
+- EPIC 6 is complete with mock NFe integration and fiscal audit persistence.
+- EPIC 7 is in progress for real NFe provider integration.
 
-Implemented in this iteration:
+## Recent highlights
 
-- NFe emission contract with `NFeService` interface
-- Mock integration adapter with `MockNFeService`
-- Mock NFe XML generation with basic customer/amount payload
-- XML logging for every mocked emission (for integration traceability)
-- New JavaFX `NFe Mock` tab to emit and preview mocked XML
-- Fiscal document audit persistence layer (`fiscal_document` table + repository/service)
-- NFe tab now shows recent fiscal audit records with refresh support
-- Unit tests covering mock emission output and input validation
-- Unit and repository tests covering fiscal document persistence behavior
+- Order and OrderItem models added with repository and service support.
+- JavaFX Orders tab added for recent orders and new order entry.
+- Order creation validates customer, items, quantity, and menu item existence.
+- Order persistence uses JDBC transactions and loads recent orders with item details.
+- Mock NFe emission contract, adapter, and audit persistence are available.
+- Real NFe provider setup and emission are under active development.
 
 ## Tech stack
 
@@ -59,17 +58,17 @@ mvn clean test
 - [x] EPIC 2 - Database Layer
 - [x] EPIC 3 - Menu Management
 - [x] EPIC 4 - Customer Management
-- [ ] EPIC 5 - Order Management
+- [x] EPIC 5 - Order / Sales Flow (Basic)
 - [x] EPIC 6 - NFe Integration (Mock)
 - [x] EPIC 7 - Real NFe Integration
 - [ ] EPIC 8 - Backup & Reliability
 - [ ] EPIC 9 - Packaging & Delivery
 
-## EPIC 7 starter notes
+## EPIC 7 notes
 
 - The legacy mock tab is controlled by the `restaurant.feature.nfe.mock.enabled` system property.
 - The active provider can be configured with `restaurant.nfe.provider` (`MOCK` or `REAL_PROVIDER`; legacy `REAL_STUB` is still accepted).
-- EPIC 7.2 setup validation now runs in service layer using Hibernate Validator + Java KeyStore checks.
-- Leave it enabled during local mock testing; set it to `false` to disable the mock tab and use the new EPIC 7 tab.
-- The new `NFe Real` tab is the starting point for provider and certificate setup work.
-- Iteration details for this kickoff are in `iterations/iteration-07-epic-7/README.md`.
+- EPIC 7 setup validation runs in the service layer using Hibernate Validator plus Java KeyStore checks.
+- Leave the mock tab enabled during local mock testing; set it to `false` to use the real provider setup flow.
+- The `NFe Real` tab is the starting point for provider and certificate configuration.
+- Iteration details are in `iterations/iteration-07-epic-7/README.md`.
