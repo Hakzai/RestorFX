@@ -438,7 +438,22 @@ public class MainController {
             return;
         }
 
-        int quantity = parsePositiveQuantity(orderQuantityField.getText());
+        int quantity;
+        try {
+            quantity = parsePositiveQuantity(orderQuantityField.getText());
+        } catch (IllegalArgumentException exception) {
+            setOrderFeedback(exception.getMessage(), false);
+            return;
+        }
+
+        // Check for duplicate menu item in pending order
+        for (OrderItem pendingItem : pendingOrderItems) {
+            if (pendingItem.getMenuItemId().equals(selectedMenuItem.getId())) {
+                setOrderFeedback("This item is already in the pending order. Remove it first to add again.", false);
+                return;
+            }
+        }
+
         OrderItem orderItem = new OrderItem(
             null,
             null,
@@ -490,7 +505,8 @@ public class MainController {
                 orderMenuItemComboBox.getSelectionModel().clearSelection();
             }
             orderQuantityField.clear();
-            setOrderFeedback("Order #" + createdOrder.getId() + " saved with total " + formatCents(createdOrder.getTotalCents()), true);
+            String customerDisplay = selectedCustomer == null ? "anonymous customer" : selectedCustomer.getName();
+            setOrderFeedback("Order #" + createdOrder.getId() + " saved (" + customerDisplay + ") with total " + formatCents(createdOrder.getTotalCents()), true);
         } catch (IllegalArgumentException exception) {
             setOrderFeedback(exception.getMessage(), false);
         } catch (SQLException exception) {
@@ -899,6 +915,11 @@ public class MainController {
         String normalized = normalizeText(rawQuantity);
         if (normalized == null || normalized.isEmpty()) {
             throw new IllegalArgumentException("Quantity is required");
+        }
+
+        // Validate that input contains only digits
+        if (!normalized.matches("\\d+")) {
+            throw new IllegalArgumentException("Quantity must be a positive integer (no letters or symbols)");
         }
 
         try {

@@ -192,7 +192,7 @@
                                     <ComboBox fx:id="orderMenuItemComboBox" promptText="Select item" />
 
                                     <Label text="Quantity" styleClass="field-label" />
-                                    <TextField fx:id="orderQuantityField" promptText="e.g. 2" />
+                                    <TextField fx:id="orderQuantityField" promptText="e.g. 2 (positive integer only)" />
 
                                     <HBox spacing="8.0">
                                         <Button text="Add Item" styleClass="action-button" onAction="#onAddPendingOrderItem" />

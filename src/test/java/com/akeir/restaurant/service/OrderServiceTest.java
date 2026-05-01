@@ -37,7 +37,7 @@ public class OrderServiceTest {
         assertEquals(2, created.getItems().size());
         assertEquals(5960, created.getTotalCents());
         assertEquals("Burger", created.getItems().get(0).getMenuItemName());
-        assertEquals(202L, menuItemService.getLastRequestedId());
+        assertEquals("Fries", created.getItems().get(1).getMenuItemName());
         assertEquals(11L, customerService.getLastRequestedId());
     }
 
@@ -54,6 +54,36 @@ public class OrderServiceTest {
 
         OrderService service = new OrderService(new StubOrderRepository(), new StubMenuItemService(), customerService);
         service.create(Long.valueOf(11L), asItems(new OrderItem(null, null, Long.valueOf(101L), null, 1, 0, 0)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createShouldRejectZeroQuantity() throws SQLException {
+        OrderService service = new OrderService(new StubOrderRepository(), new StubMenuItemService(), new StubCustomerService());
+        service.create(Long.valueOf(11L), asItems(new OrderItem(null, null, Long.valueOf(101L), null, 0, 0, 0)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createShouldRejectNegativeQuantity() throws SQLException {
+        OrderService service = new OrderService(new StubOrderRepository(), new StubMenuItemService(), new StubCustomerService());
+        service.create(Long.valueOf(11L), asItems(new OrderItem(null, null, Long.valueOf(101L), null, -5, 0, 0)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createShouldRejectUnknownMenuItem() throws SQLException {
+        OrderService service = new OrderService(new StubOrderRepository(), new StubMenuItemService(), new StubCustomerService());
+        service.create(Long.valueOf(11L), asItems(new OrderItem(null, null, Long.valueOf(999L), null, 1, 0, 0)));
+    }
+
+    @Test
+    public void createShouldAllowNullCustomer() throws SQLException {
+        StubOrderRepository orderRepository = new StubOrderRepository();
+        OrderService service = new OrderService(orderRepository, new StubMenuItemService(), new StubCustomerService());
+
+        Order created = service.create(null, asItems(new OrderItem(null, null, Long.valueOf(101L), null, 1, 0, 0)));
+
+        assertNotNull(created);
+        assertEquals(null, created.getCustomerId());
+        assertEquals(null, created.getCustomerName());
     }
 
     private List<OrderItem> asItems(OrderItem... items) {
@@ -98,6 +128,14 @@ public class OrderServiceTest {
     private static final class StubMenuItemService extends MenuItemService {
 
         private long lastRequestedId;
+
+        @Override
+        public java.util.List<MenuItem> findAll() {
+            java.util.List<MenuItem> items = new java.util.ArrayList<MenuItem>();
+            items.add(new MenuItem(Long.valueOf(101L), "Burger", null, 2890, true));
+            items.add(new MenuItem(Long.valueOf(202L), "Fries", null, 180, true));
+            return items;
+        }
 
         @Override
         public Optional<MenuItem> findById(long id) {

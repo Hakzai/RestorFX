@@ -100,4 +100,44 @@ public class OrderRepositoryTest {
     public void shouldReturnEmptyWhenOrderDoesNotExist() throws Exception {
         assertFalse(repository.findById(9999L).isPresent());
     }
+
+    @Test
+    public void shouldHandleNullCustomerId() throws Exception {
+        MenuItem burger = new MenuItem(null, "Burger", "Classic burger", 2890, true);
+        long burgerId = menuItemRepository.create(burger);
+
+        Order order = new Order(null, null, null, "REGISTERED", 2890, null, Arrays.asList(
+            new OrderItem(null, null, Long.valueOf(burgerId), null, 1, 2890, 2890)
+        ));
+        order.setTotalCents(2890);
+
+        long orderId = repository.create(order);
+        assertTrue(orderId > 0);
+
+        Optional<Order> loaded = repository.findById(orderId);
+        assertTrue(loaded.isPresent());
+        assertEquals(null, loaded.get().getCustomerId());
+        assertEquals(null, loaded.get().getCustomerName());
+        assertEquals(1, loaded.get().getItems().size());
+    }
+
+    @Test
+    public void shouldPopulateCustomerNameFromJoin() throws Exception {
+        Customer customer = new Customer(null, "John Smith", null, null, null);
+        long customerId = customerRepository.create(customer);
+
+        MenuItem burger = new MenuItem(null, "Burger", "Classic burger", 2890, true);
+        long burgerId = menuItemRepository.create(burger);
+
+        Order order = new Order(null, Long.valueOf(customerId), null, "REGISTERED", 2890, null, Arrays.asList(
+            new OrderItem(null, null, Long.valueOf(burgerId), null, 1, 2890, 2890)
+        ));
+        order.setTotalCents(2890);
+
+        long orderId = repository.create(order);
+
+        Optional<Order> loaded = repository.findById(orderId);
+        assertTrue(loaded.isPresent());
+        assertEquals("John Smith", loaded.get().getCustomerName());
+    }
 }

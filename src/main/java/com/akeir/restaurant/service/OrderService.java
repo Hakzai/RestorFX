@@ -49,6 +49,13 @@ public class OrderService {
             throw new IllegalArgumentException("At least one order item is required");
         }
 
+        // Batch fetch all menu items to avoid N+1 queries
+        List<MenuItem> allMenuItems = menuItemService.findAll();
+        java.util.Map<Long, MenuItem> menuItemMap = new java.util.HashMap<Long, MenuItem>();
+        for (MenuItem menuItem : allMenuItems) {
+            menuItemMap.put(menuItem.getId(), menuItem);
+        }
+
         int totalCents = 0;
         List<OrderItem> enrichedItems = new ArrayList<OrderItem>();
 
@@ -61,8 +68,10 @@ public class OrderService {
                 throw new IllegalArgumentException("Quantity must be greater than zero");
             }
 
-            MenuItem menuItem = menuItemService.findById(requestedItem.getMenuItemId().longValue())
-                .orElseThrow(() -> new IllegalArgumentException("Menu item not found: " + requestedItem.getMenuItemId()));
+            MenuItem menuItem = menuItemMap.get(requestedItem.getMenuItemId());
+            if (menuItem == null) {
+                throw new IllegalArgumentException("Menu item not found: " + requestedItem.getMenuItemId());
+            }
 
             int unitPriceCents = menuItem.getPriceCents();
             int itemTotalCents = unitPriceCents * requestedItem.getQuantity();
@@ -79,7 +88,7 @@ public class OrderService {
             ));
         }
 
-        Order order = new Order(null, customerId, resolveCustomerName(customerId), DEFAULT_STATUS, totalCents, null, enrichedItems);
+        Order order = new Order(null, customerId, resolveCustomerName(customerId), DEFAULT_STATUS, totalCents, getCurrentTimestamp(), enrichedItems);
         orderRepository.create(order);
         return order;
     }
@@ -114,5 +123,9 @@ public class OrderService {
             }
         }
         return items;
+    }
+
+    private String getCurrentTimestamp() {
+        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
     }
 }
