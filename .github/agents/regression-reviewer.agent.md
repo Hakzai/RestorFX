@@ -1,4 +1,5 @@
 ---
+name: Regression Reviewer
 description: "Use this agent for the regression-reviewer workflow in this repository."
 ---
 # Agent: Regression Reviewer
@@ -29,8 +30,8 @@ You are a **risk analysis specialist**.
 
 Read:
 
-- architecture.md
-- feature-development.md
+- .github/instructions/architecture.instructions.md
+- .github/instructions/feature-development.instructions.md
 - data-model (if exists)
 
 ---

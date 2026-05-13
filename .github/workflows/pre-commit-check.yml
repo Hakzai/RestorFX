@@ -1,5 +1,12 @@
 name: Pre-Commit Quality Gate
 
+permissions:
+  contents: read
+
+concurrency:
+  group: pre-commit-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
 
@@ -9,6 +16,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Java (Liberica Full JDK with JavaFX)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'liberica'
+          java-version: '8'
+          java-package: 'jdk+fx'
+          cache: maven
 
       - name: Check for forbidden patterns
         run: |

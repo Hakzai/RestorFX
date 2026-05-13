@@ -1,4 +1,5 @@
 ---
+name: Pre Commit Reviewer
 description: "Use this agent for the pre-commit-reviewer workflow in this repository."
 ---
 # Agent: Pre-Commit Reviewer
@@ -26,11 +27,11 @@ You are a **strict gatekeeper**.
 
 Read:
 
-- architecture.md
-- engineering-guidelines.md
-- coding-standards.md
-- feature-development.md
-- tech-stack.md
+- .github/instructions/architecture.instructions.md
+- .github/instructions/engineering-guidelines.instructions.md
+- .github/instructions/coding-standards.instructions.md
+- .github/instructions/feature-development.instructions.md
+- .github/instructions/tech-stack.instructions.md
 
 ---
 
