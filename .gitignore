@@ -4,6 +4,7 @@ target/
 .vscode/
 *.iml
 *.log
+*.code-workspace
 
 ## Database files
 db/restaurant.db
