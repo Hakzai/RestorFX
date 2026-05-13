@@ -27,6 +27,11 @@ Follow ALL steps in order:
   - feature-development.md
   - tech-stack.md
 
+### Step 1.5 - Plan the Work
+- If the change is broader than a single screen or touches multiple layers, use skill: `create-implementation-plan`.
+- If the feature introduces a meaningful architecture choice, use skill: `create-architectural-decision-record`.
+- If the request extends an existing feature, consider agent: `feature-evolution` instead of a full rebuild.
+
 ---
 
 ### Step 2 - Define Entity
@@ -82,6 +87,10 @@ Use skill: `refactor-to-layered`
 - Ensure:
   - no business logic in controller
   - no DB access outside repository
+
+### Step 7.5 - Review Impact
+- If database structure changes, use agent: `schema-migration`.
+- If the feature can affect existing behavior, use agent: `regression-reviewer`.
 
 ---
 

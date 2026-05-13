@@ -17,7 +17,7 @@ Introduce a new module (e.g., Payments, Reports).
 ---
 
 ### 2. Create Features
-Use agent: full-cycle-agent
+Use agent: full-cycle
 
 ---
 
