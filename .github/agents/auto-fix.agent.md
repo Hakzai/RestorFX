@@ -1,4 +1,5 @@
 ---
+name: Auto Fix
 description: "Use this agent for the auto-fix workflow in this repository."
 ---
 # Agent: Auto Fix
@@ -30,11 +31,11 @@ You are a **precise refactoring agent**.
 
 Read:
 
-- architecture.md
-- engineering-guidelines.md
-- coding-standards.md
-- feature-development.md
-- tech-stack.md
+- .github/instructions/architecture.instructions.md
+- .github/instructions/engineering-guidelines.instructions.md
+- .github/instructions/coding-standards.instructions.md
+- .github/instructions/feature-development.instructions.md
+- .github/instructions/tech-stack.instructions.md
 
 ---
 

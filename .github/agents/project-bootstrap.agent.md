@@ -1,4 +1,5 @@
 ---
+name: Project Bootstrap
 description: "Use this agent for the project-bootstrap workflow in this repository."
 ---
 # Agent: Project Bootstrap

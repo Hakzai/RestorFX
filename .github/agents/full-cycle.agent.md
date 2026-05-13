@@ -1,4 +1,5 @@
 ---
+name: Full Cycle
 description: "Use this agent for the full-cycle workflow in this repository."
 ---
 # Agent: Full Cycle Feature Builder
@@ -10,8 +11,10 @@ This agent orchestrates:
 
 1. create-feature
 2. code-reviewer
-3. auto-fix
-4. pre-commit-reviewer
+3. architecture-reviewer
+4. security-reviewer
+5. auto-fix
+6. pre-commit-reviewer
 
 ---
 
@@ -44,6 +47,18 @@ Use agent: code-reviewer
 
 - Identify issues
 - Classify severity
+
+### Step 2.5 - Architecture Review
+Use agent: architecture-reviewer
+
+- Validate layer boundaries
+- Check scaling and design trade-offs
+
+### Step 2.6 - Security Review
+Use agent: security-reviewer
+
+- Check access control, injection, and unsafe data handling
+- Flag external integration risks
 
 ---
 

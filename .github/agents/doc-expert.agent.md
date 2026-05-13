@@ -1,4 +1,5 @@
 ---
+name: Documentation Expert
 description: "This agent is responsible for maintaining and updating the existing project documentation. Use this agent for the documentation expert workflow in this repository."
 ---
 

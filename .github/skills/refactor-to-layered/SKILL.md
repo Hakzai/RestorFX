@@ -18,7 +18,7 @@ Fix architecture violations.
    - Clean controller
 
 3. Rules:
-   - Follow architecture.md strictly
+- Follow .github/instructions/architecture.instructions.md strictly
 
 4. Output:
    - Clean layered structure

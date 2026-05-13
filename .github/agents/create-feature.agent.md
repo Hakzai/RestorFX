@@ -1,4 +1,5 @@
 ---
+name: Create Feature
 description: "Use this agent for the create-feature workflow in this repository."
 ---
 # Agent: Create Feature
@@ -22,10 +23,15 @@ Follow ALL steps in order:
 
 ### Step 1 - Validate Context
 - Read:
-  - architecture.md
-  - engineering-guidelines.md
-  - feature-development.md
-  - tech-stack.md
+  - .github/instructions/architecture.instructions.md
+  - .github/instructions/engineering-guidelines.instructions.md
+  - .github/instructions/feature-development.instructions.md
+  - .github/instructions/tech-stack.instructions.md
+
+### Step 1.5 - Plan the Work
+- If the change is broader than a single screen or touches multiple layers, use skill: `create-implementation-plan`.
+- If the feature introduces a meaningful architecture choice, use skill: `create-architectural-decision-record`.
+- If the request extends an existing feature, consider agent: `feature-evolution` instead of a full rebuild.
 
 ---
 
@@ -33,7 +39,7 @@ Follow ALL steps in order:
 - Identify:
   - Entity name
   - Fields and types
-- Ensure naming follows coding-standards.md
+- Ensure naming follows .github/instructions/coding-standards.instructions.md
 
 ---
 
@@ -82,6 +88,10 @@ Use skill: `refactor-to-layered`
 - Ensure:
   - no business logic in controller
   - no DB access outside repository
+
+### Step 7.5 - Review Impact
+- If database structure changes, use agent: `schema-migration`.
+- If the feature can affect existing behavior, use agent: `regression-reviewer`.
 
 ---
 

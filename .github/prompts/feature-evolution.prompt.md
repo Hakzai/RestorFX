@@ -11,7 +11,7 @@ Modify an existing feature safely.
 ## Steps
 
 ### 1. Evolve Feature
-Use agent: feature-evolution-agent
+Use agent: feature-evolution
 
 Input:
 - Existing feature
@@ -20,7 +20,7 @@ Input:
 ---
 
 ### 2. Check Database Impact
-Use agent: schema-migration-agent
+Use agent: schema-migration
 
 ---
 

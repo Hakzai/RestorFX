@@ -1,4 +1,5 @@
 ---
+name: Schema Migration
 description: "Use this agent for the schema-migration workflow in this repository."
 ---
 # Agent: Schema Migration

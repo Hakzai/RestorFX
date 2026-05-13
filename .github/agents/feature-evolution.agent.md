@@ -1,4 +1,5 @@
 ---
+name: Feature Evolution
 description: "Use this agent for the feature-evolution workflow in this repository."
 ---
 # Agent: Feature Evolution

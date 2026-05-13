@@ -16,7 +16,7 @@ Apply database changes safely.
 ---
 
 ### 2. Generate Migration
-Use agent: schema-migration-agent
+Use agent: schema-migration
 
 ---
 
@@ -26,7 +26,7 @@ Use agent: regression-reviewer
 ---
 
 ### 4. Apply Changes in Code
-Use agent: feature-evolution-agent
+Use agent: feature-evolution
 
 ---
 
