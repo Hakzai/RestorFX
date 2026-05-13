@@ -21,8 +21,8 @@ Generate a complete CRUD feature following the project architecture.
    - Basic JavaFX UI (FXML + controller)
 
 2. Follow strictly:
-   - architecture.md
-   - feature-development.md
+   - .github/instructions/architecture.instructions.md
+   - .github/instructions/feature-development.instructions.md
 
 3. Rules:
    - Use simple JDBC (no ORM)

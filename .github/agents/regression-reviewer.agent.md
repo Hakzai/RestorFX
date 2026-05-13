@@ -29,8 +29,8 @@ You are a **risk analysis specialist**.
 
 Read:
 
-- architecture.md
-- feature-development.md
+- .github/instructions/architecture.instructions.md
+- .github/instructions/feature-development.instructions.md
 - data-model (if exists)
 
 ---

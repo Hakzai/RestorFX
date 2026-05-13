@@ -29,31 +29,10 @@ Use this repository as a Java 8 desktop application context, not a general-purpo
 - Use prepared statements for SQL.
 - Keep error messages user-friendly in the UI.
 
-## Useful Workflow Agents
+## References
 
-- architecture-reviewer
-- security-reviewer
-- debug-mode
-- project-architecture-planner
-- project-documenter
-- code-reviewer
-- auto-fix
-- full-cycle
-- regression-reviewer
-- schema-migration
-- feature-evolution
-
-## Useful Skills
-
-- crud-generator
-- javafx-screen-builder
-- sqlite-schema-sync
-- maven-dependency-manager
-- refactor-to-layered
-- manual-test-checklist
-- create-implementation-plan
-- create-architectural-decision-record
-- create-readme
+- Agent and skill catalog: [AGENTS.md](../AGENTS.md)
+- Detailed rules: [.github/instructions/](instructions/)
 
 ## Current Roadmap
 

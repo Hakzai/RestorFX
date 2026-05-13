@@ -1,34 +1,19 @@
 # AGENTS.md
 
-## Project Overview
+## Purpose
 
-RestorFX is a Java 8 desktop application built with JavaFX, Maven, SQLite, and JDBC. It follows a layered monolith architecture:
+Use this file as the catalog of Copilot agents and skills for RestorFX.
 
-- controller: UI interaction only
-- service: business rules only
-- repository: persistence only
-- model: entities and data structures
-- integration: external adapters such as NFe
+## Canonical Instructions
 
-## Hard Rules
+- See [.github/copilot-instructions.md](.github/copilot-instructions.md) for project rules and constraints.
+- See [.github/instructions/](.github/instructions/) for detailed instruction files.
 
-- Keep controllers free of business logic.
-- Keep services free of UI access.
-- Keep repositories limited to persistence.
-- Use JDBC only for database access.
-- Do not introduce Spring Boot, Hibernate/JPA, microservices, or unnecessary frameworks.
-- Prefer the simplest working solution.
-- Do not create unused abstractions or classes.
+## Project Snapshot
 
-## Core Stack
-
-- Java 8
-- JavaFX
-- Maven
-- SQLite
-- SLF4J for logging
-- Jackson when JSON is needed
-- Apache Commons only when it solves a real problem
+- Java 8 JavaFX desktop app
+- Layered monolith: controller -> service -> repository -> model
+- Integration layer for external systems (NFe)
 
 ## Current Direction
 

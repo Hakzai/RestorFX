@@ -28,7 +28,7 @@ You are **project-agnostic**. You do not assume any specific language, framework
 Before starting, check for these optional context sources (read them if they exist, skip if they don't):
 - `Agents.md` or `AGENTS.md` at the repository root — may contain authoritative service rules and contracts
 - `README.md` — project overview and setup instructions
-- `ARCHITECTURE.md`, `docs/architecture.md`, or similar — existing architecture documentation
+- `ARCHITECTURE.md`, `architecture-overview.md`, `docs/architecture.md`, or similar — existing architecture documentation
 - `.github/copilot-instructions.md` — project-specific AI instructions
 
 ## Purpose
@@ -90,7 +90,7 @@ Check for and read (if they exist):
 1. `Agents.md` or `AGENTS.md` at the repository root
 2. `README.md`
 3. `.github/copilot-instructions.md`
-4. `ARCHITECTURE.md`, `docs/` directory, `CONTRIBUTING.md`
+4. `ARCHITECTURE.md`, `architecture-overview.md`, `docs/` directory, `CONTRIBUTING.md`
 
 #### 1b. Detect Technology Stack
 

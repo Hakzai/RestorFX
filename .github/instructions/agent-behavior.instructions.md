@@ -4,9 +4,9 @@ description: "Repository instructions for agent-behavior."
 # Agent Behavior Rules
 
 ## Before coding
-- Read architecture.md
-- Read engineering-guidelines.md
-- Read feature-development.md
+- Read .github/instructions/architecture.instructions.md
+- Read .github/instructions/engineering-guidelines.instructions.md
+- Read .github/instructions/feature-development.instructions.md
 
 ## Development mindset
 - Prefer simplicity
