@@ -34,6 +34,7 @@ Use this file as the catalog of Copilot agents and skills for RestorFX.
 - regression-reviewer
 - schema-migration
 - feature-evolution
+- ai-automation-engineer
 
 ## Preferred Skills
 
