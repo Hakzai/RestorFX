@@ -1,4 +1,5 @@
 ---
+name: Pre Commit Reviewer
 description: "Use this agent for the pre-commit-reviewer workflow in this repository."
 ---
 # Agent: Pre-Commit Reviewer

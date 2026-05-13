@@ -1,4 +1,5 @@
 ---
+name: Regression Reviewer
 description: "Use this agent for the regression-reviewer workflow in this repository."
 ---
 # Agent: Regression Reviewer

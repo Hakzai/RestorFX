@@ -1,4 +1,5 @@
 ---
+name: Full Cycle
 description: "Use this agent for the full-cycle workflow in this repository."
 ---
 # Agent: Full Cycle Feature Builder

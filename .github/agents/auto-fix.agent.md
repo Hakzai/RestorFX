@@ -1,4 +1,5 @@
 ---
+name: Auto Fix
 description: "Use this agent for the auto-fix workflow in this repository."
 ---
 # Agent: Auto Fix

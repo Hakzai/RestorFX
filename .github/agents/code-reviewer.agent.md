@@ -1,4 +1,5 @@
 ---
+name: Code Reviewer
 description: "Use this agent for the code-reviewer workflow in this repository."
 ---
 # Agent: Code Reviewer

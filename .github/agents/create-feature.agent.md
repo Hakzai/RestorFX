@@ -1,4 +1,5 @@
 ---
+name: Create Feature
 description: "Use this agent for the create-feature workflow in this repository."
 ---
 # Agent: Create Feature
